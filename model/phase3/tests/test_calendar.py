@@ -13,6 +13,7 @@ class CalendarTests(unittest.TestCase):
     def test_federal_is_not_gsu_closure(self):
         f=classify('2026-10-12',self.calendar)
         self.assertTrue(f['federal_holiday']);self.assertFalse(f['gsu_no_class_confirmed']);self.assertEqual(f['day_type'],'term_weekday')
+        self.assertEqual(f['schedule_basis'],'full_semester');self.assertEqual(f['label'],'풀 학기 평일')
     def test_break_and_closed_are_distinct(self):
         f=classify('2026-11-23',self.calendar)
         self.assertEqual(f['day_type'],'academic_break');self.assertFalse(f['university_closed_confirmed'])

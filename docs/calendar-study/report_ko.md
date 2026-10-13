@@ -5,8 +5,8 @@
 ## 확인한 일정
 
 - 2026-09-07: GSU Labor Day 휴일. 연방 공휴일이기도 하다.
-- 2026-10-12: 연방 Columbus Day지만 GSU 휴무로 분류하지 않는다. 공식 달력에 미니학기 수업 시작이 올라 있다.
-- 2026-11-23–28: Full Semester/MMII Thanksgiving 수업 휴식. 11월 26–27일의 학교 휴무는 따로 구분한다. 확인한 일정이 28일까지이므로 임의로 29일까지 수업 휴식 범위를 늘리지 않았다.
+- 2026-10-12: 연방 Columbus Day지만 풀 학기 수업 기간의 평일이며, 확인된 GSU 휴무 목록에 포함하지 않는다. 미니학기 시작·종료는 분류에 사용하지 않는다.
+- 2026-11-23–28: Full Semester Thanksgiving 수업 휴식. 11월 26–27일의 학교 휴무는 따로 구분한다. 확인한 일정이 28일까지이므로 임의로 29일까지 수업 휴식 범위를 늘리지 않았다.
 - 2026-12-21–2027-01-03: GSU 겨울 휴무. 학기 수업 종료는 12월 7일이다. 일반 학기 범위 밖이며 휴무 목록에도 없는 날짜는 unknown으로 남긴다.
 
 일반 날짜의 `term_weekday`는 학기 범위에 따른 일정 분류다. 실제로 모든 학생이 수업을 듣는다는 뜻은 아니다. 학과별 예외·행사·임시 폐쇄는 포함하지 않았다. 일정은 2026-10-13에 확인한 정적 버전으로 저장했으며 다음 학기를 자동 추측하지 않는다.
@@ -58,7 +58,6 @@ Phase 2의 원본 11,683건 및 동일 matched origins를 재사용했다. 9월 
 - [GSU 수업 종료](https://calendar.gsu.edu/calendar/day/2026/12/7)
 - [GSU Thanksgiving 수업 휴식](https://calendar.gsu.edu/event/thanksgiving-break-full-semester-mmii)
 - [GSU 직원 휴무·겨울 폐쇄 일정](https://hr.gsu.edu/benefits/time-off-and-time-away/)
-- [GSU 미니학기 시작 등 학사 일정](https://calendar.gsu.edu/)
 - [OPM 연방 공휴일](https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/)
 
 저장소 실행: `python model/phase3/annotate_calendar.py --csv data/parking.csv --out calendar-audit.csv`.

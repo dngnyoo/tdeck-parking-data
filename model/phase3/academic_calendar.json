@@ -1,5 +1,6 @@
 {
-  "version": "2026-fall-reviewed-2026-10-13",
+  "version": "2026-fall-full-semester-2026-10-13",
+  "schedule_basis": "full_semester",
   "reviewed_at": "2026-10-13",
   "timezone": "America/New_York",
   "scope": "GSU full-semester campus schedule; departmental exceptions and emergencies not covered",
