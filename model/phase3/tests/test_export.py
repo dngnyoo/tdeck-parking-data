@@ -9,7 +9,7 @@ import unittest
 from zoneinfo import ZoneInfo
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-from export_prediction import build_payload,baseline,read_observations
+from export_prediction import build_payload,baseline,read_observations,shift,elapsed
 
 ROOT=Path(__file__).resolve().parents[1]
 CFG=json.loads((ROOT/'config.json').read_text())
@@ -61,5 +61,21 @@ class PredictorTests(unittest.TestCase):
     def test_capacity_anomaly(self):
         self.rows[-1][1]=1400;self.save()
         self.assertEqual(build_payload(self.path,CFG,self.origin)['reason'],'capacity_anomaly')
+    def test_dst_elapsed_horizon(self):
+        fall=datetime.fromisoformat('2026-11-01T01:50:00-04:00').astimezone(TZ)
+        target=shift(fall,1800)
+        self.assertEqual(target.isoformat(),'2026-11-01T01:20:00-05:00')
+        self.assertEqual(elapsed(target,fall),1800)
+        spring=datetime.fromisoformat('2027-03-14T01:50:00-05:00').astimezone(TZ)
+        self.assertEqual(shift(spring,1800).isoformat(),'2027-03-14T03:20:00-04:00')
+    def test_dst_repeated_clock_readings_are_distinct(self):
+        self.rows=[['2026-11-01T01:30:00-04:00',50,1300,0],['2026-11-01T01:30:00-05:00',-5,1300,100]];self.save()
+        readings,_=read_observations(self.path,TZ)
+        self.assertEqual(len(readings),2);self.assertEqual(readings[-1]['free'],-5)
+        self.assertEqual(elapsed(readings[-1]['time'],readings[0]['time']),3600)
+    def test_dst_stale_sensor(self):
+        self.rows.append(['2026-11-01T01:50:00-04:00',20,1300,0]);self.save()
+        now=datetime.fromisoformat('2026-11-01T01:11:00-05:00')
+        self.assertEqual(build_payload(self.path,CFG,now)['reason'],'stale_observation')
 
 if __name__=='__main__':unittest.main()
