@@ -44,6 +44,18 @@ python -m http.server 8765 --directory site
 
 ## JSON v3
 
+### 학사 일정 추가 (2026-10-13)
+
+`academic_calendar.json`에 공식 GSU Full Semester 일정·학교 휴무와 OPM 연방 공휴일을 별도로 기록했습니다. 연방 공휴일은 GSU 휴강을 의미하지 않습니다. 10월 12일은 연방 공휴일이지만 GSU 휴무로 표시하지 않습니다. 학과별 수업/행사/긴급 휴무는 포함하지 않습니다. 일반 평일은 공식 학기 시작·종료 범위에 따른 일정 분류이며 실제 수업 참석 여부가 아닙니다. 목록에 없는 기간/연도는 unknown/null로 남깁니다. 다음 학기 전에 공식 일정을 확인해 version을 갱신하세요.
+
+```sh
+python model/phase3/annotate_calendar.py --csv data/parking.csv --out calendar-audit.csv
+```
+
+원본 CSV는 변경하지 않고 날짜별 별도 감사 CSV를 만듭니다. 공개 JSON은 `calendar`와 `shadow_predictions`를 추가합니다. 화면에는 날짜 구분만 표시합니다. 운영 `predictions`와 경고 계수는 그대로입니다. 비교용 후보는 평일 기준선에서 확인된 GSU 휴일/수업 휴식 날짜를 제외하고, 휴일 target에 대해서는 과거 예외 날짜가 2개 미만이면 기존 기준선으로 fallback합니다. 주말/미확인 일정도 기존 기준선을 유지합니다.
+
+모든 실행의 운영/비교 예측 JSON은 별도 Actions artifact `forecast-실행번호`로 90일 보관합니다. 휴일 target 자료가 쌓인 뒤 실제 오차를 검증하기 위한 기록입니다. archive 성공은 Pages 업로드와 별도이며 수집 workflow를 수정하지 않습니다. 기존 실험 자료의 GSU 예외 날짜는 Labor Day 하루뿐이고 validation/test holiday target은 없어, 휴일 성능 개선이 입증된 모델로 운영 교체하지 않았습니다.
+
 `site/data/prediction.json`에 schema_version, status/reason, generated_at, forecast_origin, valid_until, freshness_seconds, current, history(최근 3시간), predictions(네 horizon), source_revision, CSV SHA256를 포함합니다. status=ok일 때만 forecasts를 표시합니다. stale/unavailable은 빈 predictions이며 마지막 관측은 과거 기록으로 표시할 수 있습니다.
 
 JSON의 관측 origin을 기준으로 신선도를 판단하며, 새 배포 시각만으로 과거 자료가 새 자료처럼 보이지 않습니다. 데이터 파일은 CSV만 읽습니다. 프런트엔드에는 GitHub credential, API key, workflow 환경 정보가 포함되지 않습니다.

@@ -13,6 +13,9 @@ function render(){
   $('connection').className=`connection ${state.usable?'fresh':'stale'}`;
   $('connection').replaceChildren(cell('i',''),cell('span',state.usable?'최근 자료 연결됨':(!data&&busy?'자료 확인 중':'업데이트 대기')));
   const observed=data?.current;
+  const calendar=data?.calendar;
+  $('calendar-note').hidden=!calendar;
+  $('calendar-note').textContent=calendar?`${calendar.date} · ${calendar.label}${calendar.federal_holiday?` · 연방 공휴일: ${calendar.federal_holiday_name}`:''} · 학사 일정 구분은 비교 검증 중입니다.`:'';
   $('current-value').textContent=observed && Number.isFinite(observed.free_spaces)?spaces(observed.free_spaces):'—';
   $('observed-badge').textContent=state.usable?'관측값':'마지막 관측';
   $('capacity').textContent=`총 ${spaces(observed?.total_spaces || 1300)}면`;

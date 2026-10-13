@@ -37,6 +37,8 @@ class PredictorTests(unittest.TestCase):
         self.assertTrue(any(x['free_spaces']<0 for x in p['predictions']))
         self.assertEqual(self.path.read_bytes(),before)
         self.assertEqual(p['source_sha256'],hashlib.sha256(before).hexdigest())
+        self.assertEqual(p['calendar']['prediction_policy'],'shadow_only')
+        self.assertEqual(len(p['shadow_predictions']),4)
     def test_stale_at_twenty_minutes(self):
         self.assertEqual(build_payload(self.path,CFG,self.origin+timedelta(seconds=1200))['status'],'ok')
         p=build_payload(self.path,CFG,self.origin+timedelta(seconds=1201))

@@ -51,6 +51,13 @@ jobs:
         run: node --test model/phase3/tests/state.test.mjs
       - name: Export forecast without changing collector data
         run: python model/phase3/export_prediction.py --revision "$(git rev-parse HEAD)"
+      - name: Archive production and calendar-shadow forecasts
+        uses: actions/upload-artifact@v4
+        with:
+          name: forecast-${{ github.run_id }}
+          path: site/data/prediction.json
+          retention-days: 90
+          if-no-files-found: error
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site

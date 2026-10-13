@@ -1,0 +1,30 @@
+{
+  "version": "2026-fall-reviewed-2026-10-13",
+  "reviewed_at": "2026-10-13",
+  "timezone": "America/New_York",
+  "scope": "GSU full-semester campus schedule; departmental exceptions and emergencies not covered",
+  "term": {
+    "start": "2026-08-24",
+    "classes_end": "2026-12-07",
+    "start_source": "https://calendar.gsu.edu/event/classes-begin",
+    "end_source": "https://calendar.gsu.edu/calendar/day/2026/12/7"
+  },
+  "exceptions": [
+    {"start":"2026-09-07","end":"2026-09-07","kind":"university_holiday","label":"GSU Labor Day 휴일","university_closed":true,"source":"https://calendar.gsu.edu/calendar/day/2026/9/7"},
+    {"start":"2026-11-23","end":"2026-11-28","kind":"academic_break","label":"GSU Thanksgiving 수업 휴식","university_closed":null,"source":"https://calendar.gsu.edu/event/thanksgiving-break-full-semester-mmii"},
+    {"start":"2026-11-26","end":"2026-11-27","kind":"university_holiday","label":"GSU Thanksgiving 휴무","university_closed":true,"source":"https://hr.gsu.edu/benefits/time-off-and-time-away/"},
+    {"start":"2026-12-21","end":"2027-01-03","kind":"university_closure","label":"GSU 겨울 휴무","university_closed":true,"source":"https://hr.gsu.edu/benefits/time-off-and-time-away/"}
+  ],
+  "federal_source": "https://www.opm.gov/policy-data-oversight/pay-leave/federal-holidays/",
+  "federal_years_complete": [2026],
+  "federal_observed": {
+    "2026-01-01":"New Year's Day", "2026-01-19":"Martin Luther King Jr. Day",
+    "2026-02-16":"Washington's Birthday", "2026-05-25":"Memorial Day",
+    "2026-06-19":"Juneteenth", "2026-07-03":"Independence Day (observed)",
+    "2026-09-07":"Labor Day", "2026-10-12":"Columbus Day",
+    "2026-11-11":"Veterans Day", "2026-11-26":"Thanksgiving Day",
+    "2026-12-25":"Christmas Day", "2027-01-01":"New Year's Day"
+  },
+  "model_policy": "shadow_only",
+  "minimum_exception_dates": 2
+}
