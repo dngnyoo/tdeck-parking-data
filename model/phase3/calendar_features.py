@@ -13,7 +13,7 @@ def classify(day,calendar):
     closed=any(x['university_closed'] is True for x in exceptions)
     no_class=bool(exceptions) if known else None
     kind=('university_closed' if closed else 'academic_break') if exceptions else ('weekend' if day.weekday()>=5 else 'term_weekday') if in_term else 'unknown'
-    labels={'university_closed':'GSU 휴무','academic_break':'GSU 수업 휴식','weekend':'학기 중 주말','term_weekday':'학기 중 평일','unknown':'학사 일정 미확인'}
+    labels={'university_closed':'GSU 휴무','academic_break':'풀 학기 수업 휴식','weekend':'풀 학기 주말','term_weekday':'풀 학기 평일','unknown':'풀 학기 일정 미확인'}
     federal_name=calendar['federal_observed'].get(key)
     federal=bool(federal_name) if day.year in calendar['federal_years_complete'] or federal_name else None
     exception_days={date.fromisoformat(x['start'])+timedelta(days=i) for x in calendar['exceptions'] for i in range((date.fromisoformat(x['end'])-date.fromisoformat(x['start'])).days+1)}
@@ -22,7 +22,7 @@ def classify(day,calendar):
                 federal_holiday=federal,federal_holiday_name=federal_name,
                 adjacent_to_gsu_exception=(day-timedelta(days=1) in exception_days or day+timedelta(days=1) in exception_days),
                 exception_names=[x['label'] for x in exceptions],sources=list(dict.fromkeys(x['source'] for x in exceptions)),
-                calendar_version=calendar['version'],scope=calendar['scope'])
+                calendar_version=calendar['version'],scope=calendar['scope'],schedule_basis=calendar['schedule_basis'])
 
 def baseline_history(history,target,calendar):
     """Only past readings and known date rules; no parking targets are inspected."""

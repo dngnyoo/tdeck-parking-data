@@ -46,6 +46,8 @@ python -m http.server 8765 --directory site
 
 ### 학사 일정 추가 (2026-10-13)
 
+일정 기준은 **풀 학기(Full Semester)**입니다. 미니학기 시작·종료·시험 일정은 날짜 분류나 예측에 사용하지 않습니다. 공개 JSON의 `calendar.schedule_basis`는 `full_semester`이며 화면도 ‘풀 학기 평일/주말/수업 휴식’으로 표시합니다.
+
 `academic_calendar.json`에 공식 GSU Full Semester 일정·학교 휴무와 OPM 연방 공휴일을 별도로 기록했습니다. 연방 공휴일은 GSU 휴강을 의미하지 않습니다. 10월 12일은 연방 공휴일이지만 GSU 휴무로 표시하지 않습니다. 학과별 수업/행사/긴급 휴무는 포함하지 않습니다. 일반 평일은 공식 학기 시작·종료 범위에 따른 일정 분류이며 실제 수업 참석 여부가 아닙니다. 목록에 없는 기간/연도는 unknown/null로 남깁니다. 다음 학기 전에 공식 일정을 확인해 version을 갱신하세요.
 
 ```sh
