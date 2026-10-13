@@ -1,0 +1,73 @@
+name: Predict T Deck and deploy Pages
+
+on:
+  workflow_run:
+    workflows: ["Collect T Deck parking data"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'model/phase3/**'
+      - 'site/**'
+      - '.github/workflows/predict-pages.yml'
+  schedule:
+    - cron: '2,17,32,47 * * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tdeck-prediction-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      # Read trusted default-branch source and the latest CSV together.
+      # Never execute code/download artifacts from the triggering workflow run.
+      - name: Checkout current main
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Verify predictor and service states
+        run: python -m unittest discover -s model/phase3/tests -v
+      - name: Verify frontend service states
+        run: node --test model/phase3/tests/state.test.mjs
+      - name: Export forecast without changing collector data
+        run: python model/phase3/export_prediction.py --revision "$(git rev-parse HEAD)"
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload static site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy forecast and frontend
+        id: deployment
+        uses: actions/deploy-pages@v4
