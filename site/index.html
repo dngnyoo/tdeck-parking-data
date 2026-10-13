@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#142d35">
+  <meta name="description" content="T Deck 현재 주차 잔여 공간과 15·30·60·120분 단기 예측. 관측 시각과 혼잡 가능성을 함께 확인하세요.">
+  <title>T Deck · 주차 여유 확인</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="./" aria-label="T Deck 홈"><span class="monogram">T</span><span>T Deck <small>PARKING OUTLOOK</small></span></a><span class="experimental">실험 서비스</span></header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">ATLANTA · GEORGIA STATE UNIVERSITY</p><h1>출발 전에,<br>주차 여유를 확인하세요.</h1><p class="intro-text">현재 관측과 앞으로 2시간의 예측을 한눈에.</p></div><div class="intro-meta"><span id="connection" class="connection"><i></i>자료 확인 중</span><span class="timezone">모든 시각은 애틀랜타 현지 시각</span><button id="refresh" type="button">새로고침 <span aria-hidden="true">↻</span></button></div></section>
+    <div id="notice" class="notice" role="status" hidden></div>
+    <section class="overview" aria-label="현재 관측과 예측">
+      <article class="current-card"><div class="card-head"><h2>현재 잔여 공간</h2><span id="observed-badge" class="pill">관측값</span></div><div class="current-number"><span id="current-value">—</span><span class="unit">면</span></div><p id="current-description">주차장 관측 자료를 불러오고 있습니다.</p><div class="current-bottom"><span id="capacity">총 1,300면</span><span id="observed-time">관측 시각 확인 중</span></div></article>
+      <div class="forecast-area"><div class="forecast-heading"><h2>얼마나 남아 있을까요?</h2><span>단기 예측 · 현재 관측 기준</span></div><div id="forecast-cards" class="forecast-grid"></div><p class="forecast-note">예측은 실제 잔여 공간과 다를 수 있습니다. 혼잡 경고는 확정 만차를 뜻하지 않습니다.</p></div>
+    </section>
+    <section class="chart-card"><div class="chart-heading"><div><p class="eyebrow">PARKING AVAILABILITY</p><h2>최근 관측과 단기 예측</h2></div><div class="legend"><span><i class="legend-solid"></i>관측</span><span id="forecast-legend"><i class="legend-dashed"></i>예측</span></div></div><div id="chart" class="chart" aria-live="off"><p class="chart-empty">자료를 기다리고 있습니다.</p></div><p id="chart-caption" class="chart-caption">최근 3시간 관측과 네 예측 시점을 표시합니다.</p><details><summary>그래프 수치 보기</summary><div class="table-scroll"><table><caption class="sr-only">관측과 예측 수치</caption><thead><tr><th>구분</th><th>현지 시각</th><th>잔여 공간</th></tr></thead><tbody id="chart-data"></tbody></table></div></details></section>
+    <section class="explain-grid"><article><span class="section-number">01</span><h3>현재값은 관측입니다</h3><p>주차장 자료가 마지막으로 기록된 시각을 함께 표시합니다. 화면을 열어 둔 동안 1분마다 새 자료를 확인합니다.</p></article><article><span class="section-number">02</span><h3>예측은 현재값을 반영합니다</h3><p>같은 요일·시간의 과거 패턴에 현재 주차 상황의 차이를 더해 15·30·60·120분 뒤를 추정합니다.</p></article><article><span class="section-number">03</span><h3>오래된 자료는 숨깁니다</h3><p>마지막 관측이 20분을 넘거나 최근 이력이 부족하면 예측을 표시하지 않습니다. 음수 값은 원본대로 보존합니다.</p></article></section>
+    <details class="method"><summary>예측 정확도와 자료의 한계</summary><p>약 6주 자료로 진행한 Phase 2 시간순 테스트에서 선택된 보정 모델의 평균 절대오차는 15분 5.18면, 30분 7.57면, 60분 10.98면, 120분 22.94면이었습니다. 새 자료에서 같은 정확도를 보장하지 않습니다.</p><p>평가 가능한 만차 사건은 두 개뿐이었고 장기 경고에는 오탐이 많았습니다. 센서 급변, 행사·학기 변화, 수집 지연은 반영하기 어렵습니다. 음수는 “잔여 공간 없음 또는 초과 집계”로 읽되 실제 과용량을 확정하지 않습니다.</p></details>
+  </main>
+  <footer><span>T Deck Parking Outlook · 비공식 실험 서비스</span><a href="https://github.com/dngnyoo/tdeck-parking-data" target="_blank" rel="noopener">자료 및 소스 ↗</a></footer>
+  <noscript><p class="notice">현재 관측과 예측을 표시하려면 JavaScript를 켜주세요.</p></noscript>
+</body>
+</html>

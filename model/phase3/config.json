@@ -1,0 +1,21 @@
+{
+  "timezone": "America/New_York",
+  "capacity": 1300,
+  "freshness_seconds": 1200,
+  "future_clock_tolerance_seconds": 120,
+  "trend_match_tolerance_seconds": 90,
+  "maximum_history_gap_seconds": 600,
+  "minimum_history_days": 14,
+  "baseline_half_life_days": 7,
+  "baseline_window_minutes": 15,
+  "baseline_history_policy": "completed_local_days",
+  "parameters_available_from": "2026-09-24T00:00:00-04:00",
+  "horizons": [
+    {"minutes": 15, "alpha": 1.0, "warning_cutoff": 25},
+    {"minutes": 30, "alpha": 1.0, "warning_cutoff": 25},
+    {"minutes": 60, "alpha": 1.0, "warning_cutoff": 50},
+    {"minutes": 120, "alpha": 0.75, "warning_cutoff": 100}
+  ],
+  "source_repository": "https://github.com/dngnyoo/tdeck-parking-data",
+  "selection_basis": "Phase 2 validation 2026-09-17 through 2026-09-23, MAE; warning cutoff chosen on validation full-capacity F1"
+}
