@@ -1,0 +1,11 @@
+{
+  "source": "frozen Phase 2 dataset and matched origins; exploratory reuse of already-seen test",
+  "calendar_reviewed_at": "2026-10-13",
+  "gsu_exception_dates": [
+    "2026-09-07"
+  ],
+  "validation_exception_target_days": 0,
+  "test_exception_target_days": 0,
+  "operational_policy": "shadow_only",
+  "note": "Published calendar versions as of old forecast origins were not archived; prospective holiday benefit cannot be verified. No retuning of alpha/cutoffs."
+}

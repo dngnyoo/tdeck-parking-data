@@ -8,6 +8,7 @@ import math
 from pathlib import Path
 import statistics
 from zoneinfo import ZoneInfo
+from calendar_features import load_calendar,classify,baseline_history
 
 ROOT = Path(__file__).resolve().parent
 
@@ -77,6 +78,10 @@ def build_payload(csv_path,cfg,now=None,revision=None):
     readings,invalid=read_observations(csv_path,tz);data['quality']['invalid_rows']=invalid
     if not readings:return data
     current=readings[-1];origin=current['time'];age=elapsed(now,origin)
+    calendar=load_calendar()
+    data['calendar']=classify(origin.date(),calendar)
+    data['calendar']['prediction_policy']='shadow_only'
+    data['shadow_predictions']=[]
     data['forecast_origin']=origin.isoformat();data['valid_until']=shift(origin,cfg['freshness_seconds']).isoformat()
     data['current']=dict(timestamp=origin.isoformat(),free_spaces=current['free'],total_spaces=current['capacity'])
     data['history']=[dict(timestamp=x['time'].isoformat(),free_spaces=x['free']) for x in readings if instant(shift(origin,-3*3600))<=instant(x['time'])<=instant(origin)]
@@ -93,11 +98,18 @@ def build_payload(csv_path,cfg,now=None,revision=None):
         data.update(status='stale' if reason=='stale_observation' else 'unavailable',reason=reason)
         return data
     expected_now=baseline(history,origin,cfg)
+    shadow_history,now_policy=baseline_history(history,origin,calendar)
+    shadow_now=baseline(shadow_history,origin,cfg)
     delta=current['free']-expected_now
     for item in cfg['horizons']:
         h=item['minutes'];target=shift(origin,h*60);value=baseline(history,target,cfg)+item['alpha']*delta
         data['predictions'].append(dict(horizon_minutes=h,target_time=target.isoformat(),free_spaces=value,
                                        full=value<=0,warning=value<=item['warning_cutoff'],warning_cutoff=item['warning_cutoff']))
+        candidate_history,target_policy=baseline_history(history,target,calendar)
+        candidate=baseline(candidate_history,target,cfg)+item['alpha']*(current['free']-shadow_now)
+        data['shadow_predictions'].append(dict(horizon_minutes=h,target_time=target.isoformat(),free_spaces=candidate,
+                                              now_calendar_policy=now_policy,target_calendar_policy=target_policy,
+                                              note='Research candidate only; not displayed as operational forecast'))
     data.update(status='ok',reason=None)
     return data
 
