@@ -11,6 +11,15 @@ from zoneinfo import ZoneInfo
 
 ROOT = Path(__file__).resolve().parent
 
+def instant(t):
+    return t.astimezone(timezone.utc)
+
+def elapsed(a,b):
+    return (instant(a)-instant(b)).total_seconds()
+
+def shift(t,seconds):
+    return (instant(t)+timedelta(seconds=seconds)).astimezone(t.tzinfo)
+
 def read_observations(path, tz):
     grouped={};invalid=0
     with Path(path).open(encoding='utf-8-sig',newline='') as stream:
@@ -23,9 +32,9 @@ def read_observations(path, tz):
                 if t.tzinfo is None:raise ValueError('Timestamp needs timezone offset')
                 y=float(row['free_spaces']);capacity=float(row['total_spaces'])
                 if not math.isfinite(y) or not math.isfinite(capacity) or capacity<=0:raise ValueError('Nonfinite reading')
-                grouped.setdefault(t.astimezone(tz),[]).append((y,capacity))
+                grouped.setdefault(instant(t),[]).append((y,capacity))
             except (ValueError,TypeError,KeyError):invalid+=1
-    readings=[dict(time=t,free=statistics.median(x[0] for x in values),capacity=statistics.median(x[1] for x in values)) for t,values in sorted(grouped.items())]
+    readings=[dict(time=t.astimezone(tz),free=statistics.median(x[0] for x in values),capacity=statistics.median(x[1] for x in values)) for t,values in sorted(grouped.items())]
     return readings,invalid
 
 def baseline(history,target,cfg):
@@ -41,20 +50,20 @@ def baseline(history,target,cfg):
     for row in selected:by_date.setdefault(row['time'].date(),[]).append(row)
     means=[];weights=[]
     for rows in by_date.values():
-        latest=max(x['time'] for x in rows)
-        age=(target-latest).total_seconds()/86400
+        latest=max((x['time'] for x in rows),key=instant)
+        age=elapsed(target,latest)/86400
         means.append(statistics.fmean(x['free'] for x in rows));weights.append(2**(-age/cfg['baseline_half_life_days']))
     return sum(y*w for y,w in zip(means,weights))/sum(weights)
 
 def recent_history_ok(readings,origin,cfg):
     for lag in [15,30]:
-        desired=origin-timedelta(minutes=lag)
-        past=[x for x in readings if x['time']<origin]
+        desired=shift(origin,-lag*60)
+        past=[x for x in readings if instant(x['time'])<instant(origin)]
         if not past:return False
-        nearest=min(past,key=lambda x:(abs((x['time']-desired).total_seconds()),x['time']))
-        if abs((nearest['time']-desired).total_seconds())>cfg['trend_match_tolerance_seconds']:return False
-        interval=[x for x in readings if nearest['time']<=x['time']<=origin]
-        if any((b['time']-a['time']).total_seconds()>cfg['maximum_history_gap_seconds'] for a,b in zip(interval,interval[1:])):return False
+        nearest=min(past,key=lambda x:(abs(elapsed(x['time'],desired)),instant(x['time'])))
+        if abs(elapsed(nearest['time'],desired))>cfg['trend_match_tolerance_seconds']:return False
+        interval=[x for x in readings if instant(nearest['time'])<=instant(x['time'])<=instant(origin)]
+        if any(elapsed(b['time'],a['time'])>cfg['maximum_history_gap_seconds'] for a,b in zip(interval,interval[1:])):return False
     return True
 
 def build_payload(csv_path,cfg,now=None,revision=None):
@@ -67,17 +76,17 @@ def build_payload(csv_path,cfg,now=None,revision=None):
               source_sha256=hashlib.sha256(Path(csv_path).read_bytes()).hexdigest(),quality={})
     readings,invalid=read_observations(csv_path,tz);data['quality']['invalid_rows']=invalid
     if not readings:return data
-    current=readings[-1];origin=current['time'];age=(now-origin).total_seconds()
-    data['forecast_origin']=origin.isoformat();data['valid_until']=(origin+timedelta(seconds=cfg['freshness_seconds'])).isoformat()
+    current=readings[-1];origin=current['time'];age=elapsed(now,origin)
+    data['forecast_origin']=origin.isoformat();data['valid_until']=shift(origin,cfg['freshness_seconds']).isoformat()
     data['current']=dict(timestamp=origin.isoformat(),free_spaces=current['free'],total_spaces=current['capacity'])
-    data['history']=[dict(timestamp=x['time'].isoformat(),free_spaces=x['free']) for x in readings if origin-timedelta(hours=3)<=x['time']<=origin]
+    data['history']=[dict(timestamp=x['time'].isoformat(),free_spaces=x['free']) for x in readings if instant(shift(origin,-3*3600))<=instant(x['time'])<=instant(origin)]
     day=origin.replace(hour=0,minute=0,second=0,microsecond=0)
-    history=[x for x in readings if x['time']<day]
+    history=[x for x in readings if instant(x['time'])<instant(day)]
     reason=None
     if age < -cfg['future_clock_tolerance_seconds']:reason='future_timestamp'
     elif age>cfg['freshness_seconds']:reason='stale_observation'
     elif current['capacity']!=cfg['capacity'] or current['free']>current['capacity']:reason='capacity_anomaly'
-    elif origin<datetime.fromisoformat(cfg['parameters_available_from']):reason='parameters_not_available'
+    elif instant(origin)<instant(datetime.fromisoformat(cfg['parameters_available_from'])):reason='parameters_not_available'
     elif len({x['time'].date() for x in history})<cfg['minimum_history_days']:reason='insufficient_calendar_history'
     elif not recent_history_ok(readings,origin,cfg):reason='insufficient_recent_history'
     if reason:
@@ -86,7 +95,7 @@ def build_payload(csv_path,cfg,now=None,revision=None):
     expected_now=baseline(history,origin,cfg)
     delta=current['free']-expected_now
     for item in cfg['horizons']:
-        h=item['minutes'];target=origin+timedelta(minutes=h);value=baseline(history,target,cfg)+item['alpha']*delta
+        h=item['minutes'];target=shift(origin,h*60);value=baseline(history,target,cfg)+item['alpha']*delta
         data['predictions'].append(dict(horizon_minutes=h,target_time=target.isoformat(),free_spaces=value,
                                        full=value<=0,warning=value<=item['warning_cutoff'],warning_cutoff=item['warning_cutoff']))
     data.update(status='ok',reason=None)
