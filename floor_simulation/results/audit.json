@@ -1,0 +1,21 @@
+{
+  "sha256": "86598bdcf8e3223553954047dd64faeb2b378f50af10c5304b5513c238cf7f97",
+  "rows": 11767,
+  "start": "2026-09-03T12:21:57-04:00",
+  "end": "2026-10-13T21:30:14-04:00",
+  "negative": 74,
+  "zeros": 6,
+  "impossible": 74,
+  "duplicate_rows": 0,
+  "min_free": -114,
+  "max_free": 1299,
+  "gaps_gt15min": 10,
+  "intervals_gt10min": 30,
+  "median_interval_seconds": 300.0,
+  "max_gap_seconds": 7794.999999999999,
+  "jumps": 1,
+  "invalid_rows": 74,
+  "nominal_capacities": [
+    1300
+  ]
+}

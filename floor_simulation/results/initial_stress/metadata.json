@@ -1,0 +1,219 @@
+{
+  "audit": {
+    "sha256": "86598bdcf8e3223553954047dd64faeb2b378f50af10c5304b5513c238cf7f97",
+    "rows": 79,
+    "start": "2026-09-29T09:30:16-04:00",
+    "end": "2026-09-29T15:55:12-04:00",
+    "negative": 0,
+    "zeros": 0,
+    "impossible": 0,
+    "duplicate_rows": 0,
+    "min_free": 27,
+    "max_free": 500,
+    "gaps_gt15min": 0,
+    "intervals_gt10min": 0,
+    "median_interval_seconds": 300.0,
+    "max_gap_seconds": 339.0,
+    "jumps": 0,
+    "invalid_rows": 0,
+    "nominal_capacities": [
+      1300
+    ]
+  },
+  "config": {
+    "capacity": 1300,
+    "layouts": {
+      "A_equal8": [
+        163,
+        163,
+        163,
+        163,
+        162,
+        162,
+        162,
+        162
+      ],
+      "B_unequal8": [
+        120,
+        160,
+        180,
+        180,
+        180,
+        180,
+        160,
+        140
+      ],
+      "C_unequal7": [
+        140,
+        180,
+        200,
+        220,
+        200,
+        190,
+        170
+      ]
+    },
+    "primary_dates": [
+      "2026-09-29",
+      "2026-10-13"
+    ],
+    "primary_reps": 1000,
+    "sensitivity_reps": 250,
+    "seed": 20261013,
+    "gap_minutes": 15,
+    "jump_threshold": 200,
+    "jump_window_minutes": 10,
+    "smoothing_minutes": 15,
+    "derivative_a_vehicles_per_minute": 0.15,
+    "derivative_b": 0.35,
+    "derivative_c_minutes": 3.0,
+    "preference": {
+      "weak": 0.15,
+      "moderate": 0.65,
+      "strong": 1.5
+    },
+    "duration": {
+      "standard": {
+        "mean_minutes": 240,
+        "cv": 0.55
+      },
+      "short": {
+        "mean_minutes": 120,
+        "cv": 0.65
+      },
+      "long": {
+        "mean_minutes": 360,
+        "cv": 0.55
+      }
+    },
+    "initial_age_hours": {
+      "young": 1,
+      "mixed": 4,
+      "old": 8
+    },
+    "turnover_scales": {
+      "low": 0.3,
+      "medium": 1.0,
+      "high": 3.0
+    }
+  },
+  "scenarios": {
+    "mixed": {
+      "scenario": {
+        "model": "D"
+      },
+      "replications": 1000,
+      "seed": 20261013,
+      "seconds": 17.18194289994426,
+      "intervals": 78,
+      "initializations": 1,
+      "arrivals": 1877508,
+      "departures": 1696508,
+      "early_departures": 5233,
+      "delayed_due": 0,
+      "clipped_turnover": 0,
+      "conservation_checks": 79000
+    },
+    "young": {
+      "scenario": {
+        "model": "D",
+        "age": "young"
+      },
+      "replications": 1000,
+      "seed": 20261013,
+      "seconds": 16.286838999949396,
+      "intervals": 78,
+      "initializations": 1,
+      "arrivals": 1701578,
+      "departures": 1520578,
+      "early_departures": 5637,
+      "delayed_due": 0,
+      "clipped_turnover": 0,
+      "conservation_checks": 79000
+    },
+    "old": {
+      "scenario": {
+        "model": "D",
+        "age": "old"
+      },
+      "replications": 1000,
+      "seed": 20261013,
+      "seconds": 16.73485379992053,
+      "intervals": 78,
+      "initializations": 1,
+      "arrivals": 1933100,
+      "departures": 1752100,
+      "early_departures": 5382,
+      "delayed_due": 0,
+      "clipped_turnover": 0,
+      "conservation_checks": 79000
+    },
+    "uniform": {
+      "scenario": {
+        "model": "D",
+        "initial_preference": "uniform"
+      },
+      "replications": 1000,
+      "seed": 20261013,
+      "seconds": 17.20751880016178,
+      "intervals": 78,
+      "initializations": 1,
+      "arrivals": 1877508,
+      "departures": 1696508,
+      "early_departures": 5233,
+      "delayed_due": 0,
+      "clipped_turnover": 0,
+      "conservation_checks": 79000
+    }
+  },
+  "comparison": [
+    {
+      "scenario": "mixed",
+      "period": "all",
+      "mean_abs_free_difference": 0.0,
+      "max_probability_difference_pp": 0.0
+    },
+    {
+      "scenario": "mixed",
+      "period": "after_30min",
+      "mean_abs_free_difference": 0.0,
+      "max_probability_difference_pp": 0.0
+    },
+    {
+      "scenario": "young",
+      "period": "all",
+      "mean_abs_free_difference": 0.4421962025316455,
+      "max_probability_difference_pp": 63.6
+    },
+    {
+      "scenario": "young",
+      "period": "after_30min",
+      "mean_abs_free_difference": 0.3837328767123287,
+      "max_probability_difference_pp": 52.2
+    },
+    {
+      "scenario": "old",
+      "period": "all",
+      "mean_abs_free_difference": 0.16734177215189872,
+      "max_probability_difference_pp": 8.400000000000007
+    },
+    {
+      "scenario": "old",
+      "period": "after_30min",
+      "mean_abs_free_difference": 0.14805479452054796,
+      "max_probability_difference_pp": 6.5
+    },
+    {
+      "scenario": "uniform",
+      "period": "all",
+      "mean_abs_free_difference": 5.602898734177216,
+      "max_probability_difference_pp": 99.6
+    },
+    {
+      "scenario": "uniform",
+      "period": "after_30min",
+      "mean_abs_free_difference": 2.8456232876712324,
+      "max_probability_difference_pp": 74.4
+    }
+  ]
+}
