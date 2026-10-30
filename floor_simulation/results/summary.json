@@ -1,0 +1,161 @@
+{
+  "type": "hypothetical_floor_simulation",
+  "warning": "Not empirically calibrated. No floor ground truth. Not production predictions.",
+  "matched_pair": {
+    "timestamp_morning": "2026-09-29T11:35:15-04:00",
+    "free_spaces": 116,
+    "timestamp_afternoon": "2026-09-29T14:35:12-04:00"
+  },
+  "comparison": [
+    {
+      "scenario": "A",
+      "replications": 1000,
+      "mean_L1_probability": 0.8442715355805244,
+      "mean_L1_free": 60.897179775280904,
+      "mean_abs_free_difference_from_C": 1.1431212546816476,
+      "max_abs_probability_difference_from_C": 0.386,
+      "early_departure_fraction": 0.18974376128380135,
+      "departures_per_replica": 4394.574
+    },
+    {
+      "scenario": "B",
+      "replications": 1000,
+      "mean_L1_probability": 0.8526385767790262,
+      "mean_L1_free": 60.67477528089888,
+      "mean_abs_free_difference_from_C": 0.8937116104868915,
+      "max_abs_probability_difference_from_C": 0.19499999999999998,
+      "early_departure_fraction": 0.2801389268890673,
+      "departures_per_replica": 4411.529
+    },
+    {
+      "scenario": "C",
+      "replications": 1000,
+      "mean_L1_probability": 0.8483689138576779,
+      "mean_L1_free": 59.81681460674158,
+      "mean_abs_free_difference_from_C": 0.0,
+      "max_abs_probability_difference_from_C": 0.0,
+      "early_departure_fraction": 0.33196286684458615,
+      "departures_per_replica": 4810.041
+    },
+    {
+      "scenario": "D",
+      "replications": 1000,
+      "mean_L1_probability": 0.8262415730337078,
+      "mean_L1_free": 62.68435018726591,
+      "mean_abs_free_difference_from_C": 3.53650234082397,
+      "max_abs_probability_difference_from_C": 0.738,
+      "early_departure_fraction": 0.19747763749826447,
+      "departures_per_replica": 5920.402
+    },
+    {
+      "scenario": "C_layout_B",
+      "replications": 250,
+      "mean_L1_probability": 0.8382817869415807,
+      "mean_L1_free": 56.69665979381444,
+      "mean_abs_free_difference_from_C": 10.468800687285222,
+      "max_abs_probability_difference_from_C": 0.15999999999999992,
+      "early_departure_fraction": 0.4348206111326169,
+      "departures_per_replica": 2603.952
+    },
+    {
+      "scenario": "C_layout_C",
+      "replications": 250,
+      "mean_L1_probability": 0.8722749140893472,
+      "mean_L1_free": 68.12072852233676,
+      "mean_abs_free_difference_from_C": 20.381220913107512,
+      "max_abs_probability_difference_from_C": 0.516,
+      "early_departure_fraction": 0.4348206111326169,
+      "departures_per_replica": 2603.952
+    },
+    {
+      "scenario": "C_weak",
+      "replications": 250,
+      "mean_L1_probability": 0.995298969072165,
+      "mean_L1_free": 94.99687972508592,
+      "mean_abs_free_difference_from_C": 9.723752577319589,
+      "max_abs_probability_difference_from_C": 1.0,
+      "early_departure_fraction": 0.4348206111326169,
+      "departures_per_replica": 2603.952
+    },
+    {
+      "scenario": "C_strong",
+      "replications": 250,
+      "mean_L1_probability": 0.7450996563573884,
+      "mean_L1_free": 67.45088659793814,
+      "mean_abs_free_difference_from_C": 6.256500859106529,
+      "max_abs_probability_difference_from_C": 1.0,
+      "early_departure_fraction": 0.4348206111326169,
+      "departures_per_replica": 2603.952
+    },
+    {
+      "scenario": "D_short",
+      "replications": 250,
+      "mean_L1_probability": 0.7876426116838487,
+      "mean_L1_free": 77.41232989690721,
+      "mean_abs_free_difference_from_C": 4.583335051546391,
+      "max_abs_probability_difference_from_C": 0.977,
+      "early_departure_fraction": 0.05889455325999463,
+      "departures_per_replica": 5694.856
+    },
+    {
+      "scenario": "D_long",
+      "replications": 250,
+      "mean_L1_probability": 0.8249759450171821,
+      "mean_L1_free": 82.57733333333334,
+      "mean_abs_free_difference_from_C": 3.132332474226804,
+      "max_abs_probability_difference_from_C": 0.619,
+      "early_departure_fraction": 0.40503079288788607,
+      "departures_per_replica": 2070.608
+    },
+    {
+      "scenario": "C_young",
+      "replications": 250,
+      "mean_L1_probability": 0.8481786941580756,
+      "mean_L1_free": 78.07129896907216,
+      "mean_abs_free_difference_from_C": 0.14837285223367674,
+      "max_abs_probability_difference_from_C": 0.09599999999999997,
+      "early_departure_fraction": 0.4348851284509085,
+      "departures_per_replica": 2603.952
+    },
+    {
+      "scenario": "C_old",
+      "replications": 250,
+      "mean_L1_probability": 0.8481786941580756,
+      "mean_L1_free": 78.07114776632302,
+      "mean_abs_free_difference_from_C": 0.14843728522336752,
+      "max_abs_probability_difference_from_C": 0.09599999999999997,
+      "early_departure_fraction": 0.4347622383208293,
+      "departures_per_replica": 2603.952
+    },
+    {
+      "scenario": "A_low",
+      "replications": 250,
+      "mean_L1_probability": 0.8505292096219931,
+      "mean_L1_free": 85.61382817869416,
+      "mean_abs_free_difference_from_C": 5.3231924398625425,
+      "max_abs_probability_difference_from_C": 0.492,
+      "early_departure_fraction": 0.06517510211595198,
+      "departures_per_replica": 1607.976
+    },
+    {
+      "scenario": "A_high",
+      "replications": 250,
+      "mean_L1_probability": 0.806762886597938,
+      "mean_L1_free": 77.35965635738832,
+      "mean_abs_free_difference_from_C": 3.404716494845361,
+      "max_abs_probability_difference_from_C": 0.7869999999999999,
+      "early_departure_fraction": 0.9999201286461273,
+      "departures_per_replica": 4507.248
+    },
+    {
+      "scenario": "C_uniform_initial",
+      "replications": 250,
+      "mean_L1_probability": 0.8481786941580756,
+      "mean_L1_free": 78.10842611683849,
+      "mean_abs_free_difference_from_C": 0.1600850515463917,
+      "max_abs_probability_difference_from_C": 0.09599999999999997,
+      "early_departure_fraction": 0.4348206111326169,
+      "departures_per_replica": 2603.952
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+scenario,period,mean_abs_free_difference,max_probability_difference_pp
+mixed,all,0.0,0.0
+mixed,after_30min,0.0,0.0
+young,all,0.4421962025316455,63.6
+young,after_30min,0.3837328767123287,52.2
+old,all,0.16734177215189872,8.400000000000007
+old,after_30min,0.14805479452054796,6.5
+uniform,all,5.602898734177216,99.6
+uniform,after_30min,2.8456232876712324,74.4

@@ -1,0 +1,19 @@
+{
+  "capacity": 1300,
+  "layouts": {"A_equal8": [163,163,163,163,162,162,162,162], "B_unequal8": [120,160,180,180,180,180,160,140], "C_unequal7": [140,180,200,220,200,190,170]},
+  "primary_dates": ["2026-09-29", "2026-10-13"],
+  "primary_reps": 1000,
+  "sensitivity_reps": 250,
+  "seed": 20261013,
+  "gap_minutes": 15,
+  "jump_threshold": 200,
+  "jump_window_minutes": 10,
+  "smoothing_minutes": 15,
+  "derivative_a_vehicles_per_minute": 0.15,
+  "derivative_b": 0.35,
+  "derivative_c_minutes": 3.0,
+  "preference": {"weak": 0.15, "moderate": 0.65, "strong": 1.5},
+  "duration": {"standard": {"mean_minutes": 240, "cv": 0.55}, "short": {"mean_minutes": 120, "cv": 0.65}, "long": {"mean_minutes": 360, "cv": 0.55}},
+  "initial_age_hours": {"young": 1, "mixed": 4, "old": 8},
+  "turnover_scales": {"low": 0.3, "medium": 1.0, "high": 3.0}
+}
