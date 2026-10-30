@@ -46,3 +46,20 @@
   Windows 기본 Python 3.14의 IANA tzdata 누락 실패는 별도 기록했고 우회 산식을 넣지 않았다.
 - 다음: 코드/문서를 준비 브랜치에 push → 사용자 승인 → payload 및 해당 지침만 변경 →
   승인받은 실제 알림 1회 확인. 전체 이전 검증과 무관하며 수집 Actions는 변경하지 않는다.
+
+## Phase 6 — 승인 후 운영 적용 (2026-10-30)
+
+- 사용자 결정: 요일별 Cron 5개를 유지하고 준비한 변경을 적용한다.
+- 기존 정의를 백업과 비교하고 추가 적용 직전 백업을 만들었다. payload만 command로
+  바꾸고, 공통 지침의 T Deck 30분 문장을 단일 설정값 참조로 교체했다.
+- API가 기존 toolsAllow를 자동 보존하여 최초 사후 비교가 실패했고 변경한5개 payload를
+  자동 원복했다. 정규화를 확인해 비교를 조정한 뒤 적용 성공했다. 이 과정에서 발송은 없었다.
+- 적용 후 스케줄·이름·owner·sessionKey·수신 대상·failureAlert와 다른 자동화5개의
+  정의가 보존된 것을 확인했다. Gateway 재시작·세션 DB 수정·GitHub 수집 변경은 없었다.
+- 승인된 실제 검증은 금요일 작업1회. 관측235초를 fresh로 처리하고 현재797/1300면과
+  60분 예측886.9면을 보고했다. 실행636ms, status ok, completion succeeded,
+  Telegram deliveryStatus delivered. 실제 LLM 호출0회이며 반복 전송은 하지 않았다.
+- SQLite에는 handoff1건이 남았다. 이것만으로 성공이라 하지 않고 Gateway delivery 결과와
+  함께 확인했다. command 본문은 Cron 기록/Telegram에 확인되며 일반 메인 대화의
+  agentTurn transcript와 동등한 본문 저장을 보장하지 않는다.
+- 다음: 정규 스케줄 결과 관찰. 복구 시 원본 payload 및 해당 지침 문장만 복원한다.

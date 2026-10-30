@@ -1,7 +1,7 @@
-# T Deck 알림 신선도 게이트 — 운영 승인 대기
+# T Deck 알림 신선도 게이트 — 운영 적용 완료
 
-2026-10-30. 이 모듈은 독립 준비 폴더에서 검증했으며 **운영 Cron에는 연결하지 않았다**.
-모델 호출과 실제 Telegram 테스트 발송은 0회다. 서버의 실제 수신 대상·Cron 원본은
+2026-10-30. 사용자가 5개 Cron 유지 및 적용을 승인한 뒤 **기존 5개 Cron에 연결했다**.
+모델 호출은 0회, 실제 Telegram 검증은 1회 성공했다. 서버의 실제 수신 대상·Cron 원본은
 서버의 권한 제한 백업에만 보관하며 공개 저장소에는 넣지 않는다.
 
 ## 확인된 구조와 원인
@@ -21,7 +21,7 @@
   export_prediction.py는 UTC 경과를 계산하며 정확히 1200초는 허용한다.
   collector의 timestamp는 API를 조회한 시각이며 원 센서의 별도 측정 시각을 증명하지는 않는다.
 - 5개 Cron 프롬프트 역시 최대 1200초를 지시하지만 서버 공통 `workspace/AGENTS.md`의
-  T Deck 항목은 1800초라고 되어 있다. 공통 지침은 아직 수정하지 않았다.
+  T Deck 항목은 1800초라고 되어 있었다. 승인 후 이 문장만 코드 설정을 참조하도록 수정했다.
 - 2026-10-30 금요일 10:00 실행 기록은 09:55 관측을 오래된 데이터로 보고했다.
   프롬프트에 검증 규칙은 있어도 코드 게이트가 없고 LLM이 해석·판정한다.
   금요일 run의 모델은 gpt-6-luna였다. 이는 증상의 직접 증거이며 내부 추론 원문을 확인한 것은 아니다.
@@ -30,10 +30,10 @@
   OpenClaw는 current-agent 결과의 job/run 멱등성과 채널의 모호한 전송 재시도 억제를 제공하지만,
   동일 관측을 다른 수동 실행으로 재발송하는 것을 이것만으로 막지는 못한다.
 
-## 가장 작은 운영 변경안
+## 적용한 운영 구조
 
-기존 5개 Cron의 **payload만 command로 교체**한다. ID, 이름, 스케줄, timezone,
-owner, sessionKey, sessionTarget, Telegram 수신 대상, failureAlert는 그대로 유지한다.
+기존 5개 Cron의 **payload만 command로 교체**했다. ID, 이름, 스케줄, timezone,
+owner, sessionKey, sessionTarget, Telegram 수신 대상, failureAlert는 그대로 유지했다.
 별도 systemd 스케줄러·Gateway 재시작·GitHub Actions 변경은 필요 없다.
 
 ```text
@@ -54,8 +54,8 @@ owner, sessionKey, sessionTarget, Telegram 수신 대상, failureAlert는 그대
 - `dist/server-cron-Dd6AX5Mc.mjs:212` `runCronCommandJob()`은 모델 없이 프로세스를 실행한다.
 - 같은 파일 `:3183` runCommandJob은 정확한 `NO_REPLY`를 silent로 억제한다.
 - `:2760` `finalizeCronCompletionAnnouncement()`는 기존 전달기·session key를 사용한다.
-  명령 실행 결과는 Cron run history에 남는다. 기존 agentTurn 대화 transcript와 같은 형태의
-  본문 추가까지 보장하는 것은 아니므로 승인 후 실제 세션 표시를 별도 확인해야 한다.
+  명령 실행 결과는 Cron run history에 남는다. Telegram 실제 전달을 확인했으며,
+  일반 메인 대화에 agentTurn과 같은 형태로 본문이 추가되는 것은 보장하지 않는다.
 
 ## 판정·중복 정책
 
@@ -92,7 +92,7 @@ python -m unittest discover -s notification_gate -v
 python -m notification_gate.command  # 읽기 전용, JSON 출력, Telegram 호출 없음
 ```
 
-운영 연결 예정 명령은 다음 형태다. 실제 경로와 기존 Cron ID는 서버 비공개 계획 파일에만 둔다.
+적용한 명령은 다음 형태다. 실제 경로와 기존 Cron ID는 서버 비공개 계획 파일에만 둔다.
 
 ```text
 argv: ["/usr/bin/python3", "-m", "notification_gate.command", "--emit",
@@ -105,7 +105,10 @@ outputMaxBytes: 8192
 28개 테스트: 5/19/정확히20/21분, 미래·시간대 누락/오류·DST·시각 충돌,
 API/JSON 실패, 한도/나이 혼동 방지, 동일 관측·동시 실행·재배포·같은 시각의 수치 변경,
 실패·프로세스 중단·작성 중 만료, 비정상 모델 결과, CLI NO_REPLY, 60분 예측 검증.
-실제 모델·Telegram 호출은 테스트하지 않았다.
+자동 테스트는 모델·Telegram을 호출하지 않았다. 이후 승인받은 실제 Cron 1회 검증에서
+`status=ok`, `completionStatus=succeeded`, `deliveryStatus=delivered`를 확인했다.
+관측 경과235초, 현재797/1300면, 60분 예측886.9면을 보고했고 실행은636ms였다.
+LLM model/usage 항목이 없는 command 실행이며 두 번째 실제 실행은 하지 않았다.
 
 Oracle 읽기 전용 검사 실측 예:
 
@@ -117,7 +120,7 @@ Oracle 읽기 전용 검사 실측 예:
 
 allow는 허용 판정이며 호출·발송 완료 표시가 아니다.
 
-## 승인 후 적용·복구 순서
+## 적용 결과 및 복구 순서
 
 1. 기존 5개 작업과 workspace/AGENTS.md를 서버 mode 0700/0600 백업에 보관했다.
 2. 적용 직전 최신 작업과 백업의 설정을 비교한다. 다른 변경이 있으면 병합 검토한다.
@@ -130,4 +133,9 @@ allow는 허용 판정이며 호출·발송 완료 표시가 아니다.
    현재 런타임 state, 다른 작업, 세션 DB를 백업 파일로 통째로 덮어쓰지 않는다.
    dedup DB는 삭제하지 않고 보존하며 재적용 시 전송 이력을 먼저 확인한다.
 
-**현재 3~5단계는 미실행이다. 운영 적용 전 사용자 승인이 필요하다.**
+**3~5단계는 사용자 승인 후 완료했다.** 운영 적용 중 API가 기존 toolsAllow를 보존하는
+정규화를 비교 로직이 처음에는 예상하지 못해 자동 원복했다. 이 동작을 확인해 비교를
+조정한 뒤 재적용했고, 그 과정에서 알림 실행은 없었다. 최종 실제 검증은 1회뿐이다.
+주차5개와 다른 자동화5개의 설정 보존, Gateway active를 확인했다.
+GitHub main·수집 Actions·CSV·예측기·Pages는 변경하지 않았다.
+소스/기록은 feat/notification-freshness-gate-20261030 브랜치에 보관한다.
