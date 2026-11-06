@@ -75,22 +75,67 @@ def build_payload(csv_path,cfg,now=None,revision=None):
               model='M3',parameters_available_from=cfg['parameters_available_from'],baseline_history_policy=cfg['baseline_history_policy'],
               source_repository=cfg['source_repository'],source_revision=revision,
               source_sha256=hashlib.sha256(Path(csv_path).read_bytes()).hexdigest(),quality={})
-    readings,invalid=read_observations(csv_path,tz);data['quality']['invalid_rows']=invalid
-    if not readings:return data
-    current=readings[-1];origin=current['time'];age=elapsed(now,origin)
+
+    readings, invalid = read_observations(csv_path, tz)
+    data["quality"]["invalid_rows"] = invalid
+
+    if not readings:
+        return data
+
+    # Preserve raw observations for display and auditing.
+    raw_current = readings[-1]
+    raw_readings = readings
+
+    # Normalize only the values used by the prediction model.
+    readings, clipped, rejected = normalize_observations(
+        raw_readings, cfg
+    )
+
+    data["quality"]["clipped_rows"] = clipped
+    data["quality"]["rejected_rows"] = rejected
+
+    origin = raw_current["time"]
+    age = elapsed(now, origin)
+
+    # Never substitute an older observation for a rejected latest reading.
+    current = next(
+        (
+            row for row in readings
+            if instant(row["time"]) == instant(origin)
+        ),
+        None
+    )
+
     calendar=load_calendar()
     data['calendar']=classify(origin.date(),calendar)
     data['calendar']['prediction_policy']='shadow_only'
     data['shadow_predictions']=[]
     data['forecast_origin']=origin.isoformat();data['valid_until']=shift(origin,cfg['freshness_seconds']).isoformat()
-    data['current']=dict(timestamp=origin.isoformat(),free_spaces=current['free'],total_spaces=current['capacity'])
-    data['history']=[dict(timestamp=x['time'].isoformat(),free_spaces=x['free']) for x in readings if instant(shift(origin,-3*3600))<=instant(x['time'])<=instant(origin)]
+    
+    data["current"] = dict(
+        timestamp=origin.isoformat(),
+        free_spaces=raw_current["free"],
+        total_spaces=raw_current["capacity"]
+    )
+
+    data["history"] = [
+        dict(
+            timestamp=x["time"].isoformat(),
+            free_spaces=x["free"]
+        )
+        for x in raw_readings
+        if instant(shift(origin, -3 * 3600))
+        <= instant(x["time"])
+        <= instant(origin)
+    ]
+
     day=origin.replace(hour=0,minute=0,second=0,microsecond=0)
     history=[x for x in readings if instant(x['time'])<instant(day)]
     reason=None
     if age < -cfg['future_clock_tolerance_seconds']:reason='future_timestamp'
     elif age>cfg['freshness_seconds']:reason='stale_observation'
-    elif current['capacity']!=cfg['capacity'] or current['free']>current['capacity']:reason='capacity_anomaly'
+    elif current is None:
+        reason = 'capacity_anomaly'
     elif instant(origin)<instant(datetime.fromisoformat(cfg['parameters_available_from'])):reason='parameters_not_available'
     elif len({x['time'].date() for x in history})<cfg['minimum_history_days']:reason='insufficient_calendar_history'
     elif not recent_history_ok(readings,origin,cfg):reason='insufficient_recent_history'
@@ -102,7 +147,20 @@ def build_payload(csv_path,cfg,now=None,revision=None):
     shadow_now=baseline(shadow_history,origin,cfg)
     delta=current['free']-expected_now
     for item in cfg['horizons']:
-        h=item['minutes'];target=shift(origin,h*60);value=baseline(history,target,cfg)+item['alpha']*delta
+        
+        h = item["minutes"]
+        target = shift(origin, h * 60)
+
+        raw_prediction = (
+            baseline(history, target, cfg)
+            + item["alpha"] * delta
+        )
+
+        value = max(
+            0.0,
+            min(float(cfg["capacity"]), raw_prediction)
+        )
+
         data['predictions'].append(dict(horizon_minutes=h,target_time=target.isoformat(),free_spaces=value,
                                        full=value<=0,warning=value<=item['warning_cutoff'],warning_cutoff=item['warning_cutoff']))
         candidate_history,target_policy=baseline_history(history,target,calendar)
@@ -113,28 +171,37 @@ def build_payload(csv_path,cfg,now=None,revision=None):
     data.update(status='ok',reason=None)
     return data
 
+
 def normalize_observations(readings, cfg):
     capacity = cfg["capacity"]
     tolerance = cfg["observation_tolerance_spaces"]
     capacity_tolerance = cfg["reported_capacity_tolerance_spaces"]
 
     normalized = []
+    clipped = 0
+    rejected = 0
+
     for row in readings:
         free = row["free"]
         reported_capacity = row["capacity"]
 
-        if not (-tolerance <= free <= capacity + tolerance):
-            return None
+        if (
+            free < -tolerance
+            or free > capacity + tolerance
+            or abs(reported_capacity - capacity) > capacity_tolerance
+        ):
+            rejected += 1
+            continue
 
-        if abs(reported_capacity - capacity) > capacity_tolerance:
-            return None
+        adjusted = max(0.0, min(float(capacity), free))
 
-        normalized.append({
-            **row,
-            "free": max(0.0, min(float(capacity), free))
-        })
+        if adjusted != free:
+            clipped += 1
 
-    return normalized
+        normalized.append({**row, "free": adjusted})
+
+    return normalized, clipped, rejected
+
 
 
 def main():
