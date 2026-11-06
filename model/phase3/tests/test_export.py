@@ -31,14 +31,28 @@ class PredictorTests(unittest.TestCase):
     def save(self):
         with self.path.open('w',newline='') as f:
             w=csv.writer(f);w.writerow(['timestamp','free_spaces','total_spaces','occupancy']);w.writerows(self.rows)
+    
     def test_negative_and_read_only(self):
-        before=self.path.read_bytes();p=build_payload(self.path,CFG,self.origin)
-        self.assertEqual(p['status'],'ok');self.assertEqual(p['current']['free_spaces'],-10)
-        self.assertTrue(any(x['free_spaces']<0 for x in p['predictions']))
-        self.assertEqual(self.path.read_bytes(),before)
-        self.assertEqual(p['source_sha256'],hashlib.sha256(before).hexdigest())
-        self.assertEqual(p['calendar']['prediction_policy'],'shadow_only')
-        self.assertEqual(len(p['shadow_predictions']),4)
+        before = self.path.read_bytes()
+        p = build_payload(self.path, CFG, self.origin)
+
+        self.assertEqual(p['status'], 'ok')
+        self.assertEqual(p['current']['free_spaces'], -10)
+
+        self.assertTrue(
+            all(0 <= x['free_spaces'] <= CFG['capacity']
+                for x in p['predictions'])
+        )
+        self.assertGreater(p['quality']['clipped_rows'], 0)
+
+        self.assertEqual(self.path.read_bytes(), before)
+        self.assertEqual(
+            p['source_sha256'],
+            hashlib.sha256(before).hexdigest()
+        )
+        self.assertEqual(p['calendar']['prediction_policy'], 'shadow_only')
+        self.assertEqual(len(p['shadow_predictions']), 4)
+
     def test_stale_at_twenty_minutes(self):
         self.assertEqual(build_payload(self.path,CFG,self.origin+timedelta(seconds=1200))['status'],'ok')
         p=build_payload(self.path,CFG,self.origin+timedelta(seconds=1201))
@@ -54,15 +68,51 @@ class PredictorTests(unittest.TestCase):
     def test_invalid_and_duplicate(self):
         self.rows.append(self.rows[-1]);self.rows.append(['bad',float('nan'),1300,0]);self.save()
         p=build_payload(self.path,CFG,self.origin);self.assertEqual(p['quality']['invalid_rows'],1);self.assertEqual(p['current']['free_spaces'],-10)
+    
     def test_no_same_day_in_baseline(self):
-        d,_=read_observations(self.path,TZ);history=[x for x in d if x['time'].date()<self.origin.date()]
-        expected=baseline(history,self.origin+timedelta(minutes=30),CFG)
-        self.assertAlmostEqual(expected,125)
-        p=build_payload(self.path,CFG,self.origin)
-        self.assertAlmostEqual(p['predictions'][1]['free_spaces'],-25)
+        d, _ = read_observations(self.path, TZ)
+        history = [
+            x for x in d
+            if x['time'].date() < self.origin.date()
+        ]
+
+        expected = baseline(
+            history,
+            self.origin + timedelta(minutes=30),
+            CFG
+        )
+
+        self.assertAlmostEqual(expected, 125)
+
+        p = build_payload(self.path, CFG, self.origin)
+
+        self.assertAlmostEqual(
+            p['predictions'][1]['free_spaces'], 0
+        )
+
+    
     def test_capacity_anomaly(self):
-        self.rows[-1][1]=1400;self.save()
-        self.assertEqual(build_payload(self.path,CFG,self.origin)['reason'],'capacity_anomaly')
+        # Upper boundary is allowed and clipped.
+        self.rows[-1][1] = 1400
+        self.rows[-1][2] = 1306
+        self.save()
+
+        p = build_payload(self.path, CFG, self.origin)
+
+        self.assertEqual(p['status'], 'ok')
+        self.assertIsNone(p['reason'])
+        self.assertEqual(p['current']['free_spaces'], 1400)
+        self.assertGreater(p['quality']['clipped_rows'], 0)
+
+        # Beyond the upper boundary, prediction is blocked.
+        self.rows[-1][1] = 1401
+        self.save()
+
+        p = build_payload(self.path, CFG, self.origin)
+
+        self.assertEqual(p['status'], 'unavailable')
+        self.assertEqual(p['reason'], 'capacity_anomaly')
+
     def test_dst_elapsed_horizon(self):
         fall=datetime.fromisoformat('2026-11-01T01:50:00-04:00').astimezone(TZ)
         target=shift(fall,1800)
