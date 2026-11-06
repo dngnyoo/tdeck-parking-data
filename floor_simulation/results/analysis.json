@@ -1,0 +1,520 @@
+{
+  "matched_pair": {
+    "timestamp_morning": "2026-09-29T11:35:15-04:00",
+    "free_spaces": 116,
+    "timestamp_afternoon": "2026-09-29T14:35:12-04:00"
+  },
+  "sensitivity": [
+    {
+      "scenario": "A",
+      "reference": "C",
+      "mean_abs_free_difference": 1.1750524054982816,
+      "max_abs_free_difference": 12.554000000000002,
+      "mean_abs_probability_difference_pp": 0.7081615120274912,
+      "max_probability_difference_pp": 34.199999999999996,
+      "L1_max_probability_difference_pp": 34.199999999999996
+    },
+    {
+      "scenario": "B",
+      "reference": "C",
+      "mean_abs_free_difference": 1.05469587628866,
+      "max_abs_free_difference": 10.472000000000008,
+      "mean_abs_probability_difference_pp": 0.36314432989690726,
+      "max_probability_difference_pp": 19.499999999999996,
+      "L1_max_probability_difference_pp": 19.499999999999996
+    },
+    {
+      "scenario": "C",
+      "reference": "C",
+      "mean_abs_free_difference": 0.0,
+      "max_abs_free_difference": 0.0,
+      "mean_abs_probability_difference_pp": 0.0,
+      "max_probability_difference_pp": 0.0,
+      "L1_max_probability_difference_pp": 0.0
+    },
+    {
+      "scenario": "D",
+      "reference": "C",
+      "mean_abs_free_difference": 3.906501718213058,
+      "max_abs_free_difference": 39.389,
+      "mean_abs_probability_difference_pp": 1.871735395189004,
+      "max_probability_difference_pp": 73.8,
+      "L1_max_probability_difference_pp": 72.3
+    },
+    {
+      "scenario": "C_layout_B",
+      "reference": "C",
+      "mean_abs_free_difference": 10.468800687285222,
+      "max_abs_free_difference": 42.973,
+      "mean_abs_probability_difference_pp": 0.485180412371134,
+      "max_probability_difference_pp": 15.999999999999993,
+      "L1_max_probability_difference_pp": 15.999999999999993
+    },
+    {
+      "scenario": "C_layout_C",
+      "reference": "C",
+      "mean_abs_free_difference": 20.381220913107512,
+      "max_abs_free_difference": 57.028999999999996,
+      "mean_abs_probability_difference_pp": 2.183652430044183,
+      "max_probability_difference_pp": 51.6,
+      "L1_max_probability_difference_pp": 35.599999999999994
+    },
+    {
+      "scenario": "C_weak",
+      "reference": "C",
+      "mean_abs_free_difference": 9.723752577319589,
+      "max_abs_free_difference": 65.686,
+      "mean_abs_probability_difference_pp": 4.948324742268041,
+      "max_probability_difference_pp": 100.0,
+      "L1_max_probability_difference_pp": 100.0
+    },
+    {
+      "scenario": "C_strong",
+      "reference": "C",
+      "mean_abs_free_difference": 6.256500859106529,
+      "max_abs_free_difference": 48.769999999999996,
+      "mean_abs_probability_difference_pp": 6.902534364261169,
+      "max_probability_difference_pp": 100.0,
+      "L1_max_probability_difference_pp": 100.0
+    },
+    {
+      "scenario": "D_short",
+      "reference": "D",
+      "mean_abs_free_difference": 2.352105670103093,
+      "max_abs_free_difference": 20.177999999999997,
+      "mean_abs_probability_difference_pp": 1.748840206185567,
+      "max_probability_difference_pp": 73.2,
+      "L1_max_probability_difference_pp": 73.2
+    },
+    {
+      "scenario": "D_long",
+      "reference": "D",
+      "mean_abs_free_difference": 2.583169243986255,
+      "max_abs_free_difference": 22.498000000000005,
+      "mean_abs_probability_difference_pp": 1.3494415807560138,
+      "max_probability_difference_pp": 64.0,
+      "L1_max_probability_difference_pp": 64.0
+    },
+    {
+      "scenario": "C_young",
+      "reference": "C",
+      "mean_abs_free_difference": 0.14837285223367674,
+      "max_abs_free_difference": 1.0730000000000075,
+      "mean_abs_probability_difference_pp": 0.22633161512027491,
+      "max_probability_difference_pp": 9.599999999999998,
+      "L1_max_probability_difference_pp": 9.599999999999998
+    },
+    {
+      "scenario": "C_old",
+      "reference": "C",
+      "mean_abs_free_difference": 0.14843728522336752,
+      "max_abs_free_difference": 1.0730000000000075,
+      "mean_abs_probability_difference_pp": 0.22633161512027491,
+      "max_probability_difference_pp": 9.599999999999998,
+      "L1_max_probability_difference_pp": 9.599999999999998
+    },
+    {
+      "scenario": "A_low",
+      "reference": "A",
+      "mean_abs_free_difference": 5.184401202749141,
+      "max_abs_free_difference": 38.595,
+      "mean_abs_probability_difference_pp": 2.0661082474226804,
+      "max_probability_difference_pp": 56.39999999999999,
+      "L1_max_probability_difference_pp": 56.39999999999999
+    },
+    {
+      "scenario": "A_high",
+      "reference": "A",
+      "mean_abs_free_difference": 2.8611048109965638,
+      "max_abs_free_difference": 35.295,
+      "mean_abs_probability_difference_pp": 1.3131872852233677,
+      "max_probability_difference_pp": 70.6,
+      "L1_max_probability_difference_pp": 70.6
+    },
+    {
+      "scenario": "C_uniform_initial",
+      "reference": "C",
+      "mean_abs_free_difference": 0.1600850515463917,
+      "max_abs_free_difference": 2.1129999999999995,
+      "mean_abs_probability_difference_pp": 0.22633161512027491,
+      "max_probability_difference_pp": 9.599999999999998,
+      "L1_max_probability_difference_pp": 9.599999999999998
+    }
+  ],
+  "derivative_components": {
+    "first_component_mean": 0.6094335923180442,
+    "second_component_mean": 0.1616966323436578,
+    "second_component_max": 1.2724191756191616
+  },
+  "supplemental": [
+    {
+      "name": "full_history",
+      "scenario": {
+        "model": "C",
+        "layout": "A_equal8",
+        "preference": "moderate",
+        "duration": "standard",
+        "age": "mixed",
+        "scale": "medium"
+      },
+      "config": {
+        "capacity": 1300,
+        "layouts": {
+          "A_equal8": [
+            163,
+            163,
+            163,
+            163,
+            162,
+            162,
+            162,
+            162
+          ],
+          "B_unequal8": [
+            120,
+            160,
+            180,
+            180,
+            180,
+            180,
+            160,
+            140
+          ],
+          "C_unequal7": [
+            140,
+            180,
+            200,
+            220,
+            200,
+            190,
+            170
+          ]
+        },
+        "primary_dates": [
+          "2026-09-29",
+          "2026-10-13"
+        ],
+        "primary_reps": 1000,
+        "sensitivity_reps": 250,
+        "seed": 20261013,
+        "gap_minutes": 15,
+        "jump_threshold": 200,
+        "jump_window_minutes": 10,
+        "smoothing_minutes": 15,
+        "derivative_a_vehicles_per_minute": 0.15,
+        "derivative_b": 0.35,
+        "derivative_c_minutes": 3.0,
+        "preference": {
+          "weak": 0.15,
+          "moderate": 0.65,
+          "strong": 1.5
+        },
+        "duration": {
+          "standard": {
+            "mean_minutes": 240,
+            "cv": 0.55
+          },
+          "short": {
+            "mean_minutes": 120,
+            "cv": 0.65
+          },
+          "long": {
+            "mean_minutes": 360,
+            "cv": 0.55
+          }
+        },
+        "initial_age_hours": {
+          "young": 1,
+          "mixed": 4,
+          "old": 8
+        },
+        "turnover_scales": {
+          "low": 0.3,
+          "medium": 1.0,
+          "high": 3.0
+        }
+      },
+      "replications": 100,
+      "seed": 20261013,
+      "policy": "exclude",
+      "audit": {
+        "sha256": "86598bdcf8e3223553954047dd64faeb2b378f50af10c5304b5513c238cf7f97",
+        "rows": 11767,
+        "start": "2026-09-03T12:21:57-04:00",
+        "end": "2026-10-13T21:30:14-04:00",
+        "negative": 74,
+        "zeros": 6,
+        "impossible": 74,
+        "duplicate_rows": 0,
+        "min_free": -114,
+        "max_free": 1299,
+        "gaps_gt15min": 10,
+        "intervals_gt10min": 30,
+        "median_interval_seconds": 300.0,
+        "max_gap_seconds": 7794.999999999999,
+        "jumps": 1,
+        "invalid_rows": 74,
+        "nominal_capacities": [
+          1300
+        ]
+      },
+      "seconds": 223.20082199992612,
+      "intervals": 11674,
+      "initializations": 19,
+      "arrivals": 6540109,
+      "departures": 6592809,
+      "early_departures": 2295026,
+      "delayed_due": 125687617,
+      "clipped_turnover": 1900,
+      "conservation_checks": 1169300,
+      "maximum_sd_free": 7.330238740996093,
+      "valid_times": 11693
+    },
+    {
+      "name": "weekend_A",
+      "scenario": {
+        "model": "A",
+        "layout": "A_equal8",
+        "preference": "moderate",
+        "duration": "standard",
+        "age": "mixed",
+        "scale": "medium"
+      },
+      "config": {
+        "capacity": 1300,
+        "layouts": {
+          "A_equal8": [
+            163,
+            163,
+            163,
+            163,
+            162,
+            162,
+            162,
+            162
+          ],
+          "B_unequal8": [
+            120,
+            160,
+            180,
+            180,
+            180,
+            180,
+            160,
+            140
+          ],
+          "C_unequal7": [
+            140,
+            180,
+            200,
+            220,
+            200,
+            190,
+            170
+          ]
+        },
+        "primary_dates": [
+          "2026-09-29",
+          "2026-10-13"
+        ],
+        "primary_reps": 1000,
+        "sensitivity_reps": 250,
+        "seed": 20261013,
+        "gap_minutes": 15,
+        "jump_threshold": 200,
+        "jump_window_minutes": 10,
+        "smoothing_minutes": 15,
+        "derivative_a_vehicles_per_minute": 0.15,
+        "derivative_b": 0.35,
+        "derivative_c_minutes": 3.0,
+        "preference": {
+          "weak": 0.15,
+          "moderate": 0.65,
+          "strong": 1.5
+        },
+        "duration": {
+          "standard": {
+            "mean_minutes": 240,
+            "cv": 0.55
+          },
+          "short": {
+            "mean_minutes": 120,
+            "cv": 0.65
+          },
+          "long": {
+            "mean_minutes": 360,
+            "cv": 0.55
+          }
+        },
+        "initial_age_hours": {
+          "young": 1,
+          "mixed": 4,
+          "old": 8
+        },
+        "turnover_scales": {
+          "low": 0.3,
+          "medium": 1.0,
+          "high": 3.0
+        }
+      },
+      "replications": 1000,
+      "seed": 20261013,
+      "policy": "exclude",
+      "audit": {
+        "sha256": "86598bdcf8e3223553954047dd64faeb2b378f50af10c5304b5513c238cf7f97",
+        "rows": 294,
+        "start": "2026-09-27T00:00:18-04:00",
+        "end": "2026-09-27T23:55:12-04:00",
+        "negative": 0,
+        "zeros": 0,
+        "impossible": 0,
+        "duplicate_rows": 0,
+        "min_free": 1197,
+        "max_free": 1215,
+        "gaps_gt15min": 0,
+        "intervals_gt10min": 0,
+        "median_interval_seconds": 300.0,
+        "max_gap_seconds": 339.0,
+        "jumps": 0,
+        "invalid_rows": 0,
+        "nominal_capacities": [
+          1300
+        ]
+      },
+      "seconds": 56.73247599997558,
+      "intervals": 293,
+      "initializations": 1,
+      "arrivals": 364602,
+      "departures": 353602,
+      "early_departures": 142472,
+      "delayed_due": 8711325,
+      "clipped_turnover": 0,
+      "conservation_checks": 294000,
+      "maximum_sd_free": 4.470972601123831,
+      "valid_times": 294
+    },
+    {
+      "name": "negative_clip",
+      "scenario": {
+        "model": "C",
+        "layout": "A_equal8",
+        "preference": "moderate",
+        "duration": "standard",
+        "age": "mixed",
+        "scale": "medium"
+      },
+      "config": {
+        "capacity": 1300,
+        "layouts": {
+          "A_equal8": [
+            163,
+            163,
+            163,
+            163,
+            162,
+            162,
+            162,
+            162
+          ],
+          "B_unequal8": [
+            120,
+            160,
+            180,
+            180,
+            180,
+            180,
+            160,
+            140
+          ],
+          "C_unequal7": [
+            140,
+            180,
+            200,
+            220,
+            200,
+            190,
+            170
+          ]
+        },
+        "primary_dates": [
+          "2026-09-29",
+          "2026-10-13"
+        ],
+        "primary_reps": 1000,
+        "sensitivity_reps": 250,
+        "seed": 20261013,
+        "gap_minutes": 15,
+        "jump_threshold": 200,
+        "jump_window_minutes": 10,
+        "smoothing_minutes": 15,
+        "derivative_a_vehicles_per_minute": 0.15,
+        "derivative_b": 0.35,
+        "derivative_c_minutes": 3.0,
+        "preference": {
+          "weak": 0.15,
+          "moderate": 0.65,
+          "strong": 1.5
+        },
+        "duration": {
+          "standard": {
+            "mean_minutes": 240,
+            "cv": 0.55
+          },
+          "short": {
+            "mean_minutes": 120,
+            "cv": 0.65
+          },
+          "long": {
+            "mean_minutes": 360,
+            "cv": 0.55
+          }
+        },
+        "initial_age_hours": {
+          "young": 1,
+          "mixed": 4,
+          "old": 8
+        },
+        "turnover_scales": {
+          "low": 0.3,
+          "medium": 1.0,
+          "high": 3.0
+        }
+      },
+      "replications": 250,
+      "seed": 20261013,
+      "policy": "clip",
+      "audit": {
+        "sha256": "86598bdcf8e3223553954047dd64faeb2b378f50af10c5304b5513c238cf7f97",
+        "rows": 264,
+        "start": "2026-10-13T00:00:19-04:00",
+        "end": "2026-10-13T21:30:14-04:00",
+        "negative": 21,
+        "zeros": 1,
+        "impossible": 21,
+        "duplicate_rows": 0,
+        "min_free": -114,
+        "max_free": 1203,
+        "gaps_gt15min": 0,
+        "intervals_gt10min": 0,
+        "median_interval_seconds": 300.0,
+        "max_gap_seconds": 329.0,
+        "jumps": 1,
+        "invalid_rows": 0,
+        "nominal_capacities": [
+          1300
+        ]
+      },
+      "seconds": 16.378914300119504,
+      "intervals": 262,
+      "initializations": 2,
+      "arrivals": 551763,
+      "departures": 559763,
+      "early_departures": 116535,
+      "delayed_due": 11353540,
+      "clipped_turnover": 0,
+      "conservation_checks": 66000,
+      "maximum_sd_free": 6.611597083912479,
+      "valid_times": 264
+    }
+  ]
+}
