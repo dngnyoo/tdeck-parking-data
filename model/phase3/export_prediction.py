@@ -113,6 +113,30 @@ def build_payload(csv_path,cfg,now=None,revision=None):
     data.update(status='ok',reason=None)
     return data
 
+def normalize_observations(readings, cfg):
+    capacity = cfg["capacity"]
+    tolerance = cfg["observation_tolerance_spaces"]
+    capacity_tolerance = cfg["reported_capacity_tolerance_spaces"]
+
+    normalized = []
+    for row in readings:
+        free = row["free"]
+        reported_capacity = row["capacity"]
+
+        if not (-tolerance <= free <= capacity + tolerance):
+            return None
+
+        if abs(reported_capacity - capacity) > capacity_tolerance:
+            return None
+
+        normalized.append({
+            **row,
+            "free": max(0.0, min(float(capacity), free))
+        })
+
+    return normalized
+
+
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--csv',default='data/parking.csv');parser.add_argument('--config',default=str(ROOT/'config.json'));parser.add_argument('--out',default='site/data/prediction.json');parser.add_argument('--now');parser.add_argument('--revision');args=parser.parse_args()
     cfg=json.loads(Path(args.config).read_text(encoding='utf-8'))
