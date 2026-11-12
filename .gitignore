@@ -1,3 +1,5 @@
 __pycache__/
 *.py[cod]
 site/data/prediction.json
+.online-artifacts/
+model/phase3/online_state.json*

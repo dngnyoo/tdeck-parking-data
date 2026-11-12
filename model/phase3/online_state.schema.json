@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "T Deck M3 incremental checkpoint v1",
+  "description": "Structural contract; online_state.validate additionally verifies checksum, configuration fingerprint, finite numbers, bounds and unique pending IDs.",
+  "type": "object",
+  "required": ["schema_version", "normalization_policy", "model_version", "fingerprint", "checksum", "checkpoint", "baseline", "active_date", "active", "recent", "last_event", "latest_invalid", "optimizers", "pending", "last_forecasts", "quality", "diagnostics", "last_successful_update"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": 1},
+    "normalization_policy": {"const": "finite_clip_1300_v1"},
+    "model_version": {"type": "string"},
+    "fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "checksum": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "checkpoint": {
+      "type": "object", "required": ["offset", "prefix_sha256", "encoding"],
+      "properties": {"offset": {"type": "integer", "minimum": 0}, "prefix_sha256": {"type": ["string", "null"]}, "encoding": {"const": "utf8_lf_v1"}}
+    },
+    "baseline": {
+      "type": "object", "required": ["reference", "buckets", "date_counts"],
+      "properties": {
+        "reference": {"type": ["number", "null"], "description": "UTC reference seconds for decayed sufficient statistics"},
+        "date_counts": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 0}},
+        "buckets": {"type": "object", "additionalProperties": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "minimum": 0}}}
+      }
+    },
+    "active_date": {"type": ["string", "null"]},
+    "active": {"type": "object", "description": "One unfinalized local day, UTC timestamps and raw value lists needed for exact duplicate medians"},
+    "recent": {"type": "array", "description": "Three-hour raw grouped observation ring, also normalized on use for training labels"},
+    "last_event": {"type": ["string", "null"]},
+    "latest_invalid": {"type": ["string", "null"]},
+    "optimizers": {"type": "object", "required": ["15", "30", "60", "120"], "additionalProperties": {
+      "type": "object", "required": ["alpha", "sxx", "sxz", "pairs", "expired", "last_update", "clipped_updates"],
+      "properties": {"alpha": {"type": "number", "minimum": 0}, "sxx": {"type": "number", "minimum": 0}, "sxz": {"type": "number"}, "pairs": {"type": "integer", "minimum": 0}, "expired": {"type": "integer", "minimum": 0}, "last_update": {"type": ["string", "null"]}, "clipped_updates": {"type": "integer", "minimum": 0}}
+    }},
+    "pending": {"type": "array", "items": {"type": "object", "required": ["id", "origin", "target", "horizon", "x", "baseline_target", "alpha", "prediction"], "properties": {"horizon": {"enum": [15, 30, 60, 120]}, "prediction": {"type": "number", "minimum": 0, "maximum": 1300}}}},
+    "last_forecasts": {"type": "array"},
+    "quality": {"type": "object"},
+    "diagnostics": {"type": "object"},
+    "last_successful_update": {"type": ["string", "null"]}
+  }
+}

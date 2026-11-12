@@ -9,6 +9,7 @@ from pathlib import Path
 import statistics
 from zoneinfo import ZoneInfo
 from calendar_features import load_calendar,classify,baseline_history
+from observations import read_csv, normalize_free, CAPACITY
 
 ROOT = Path(__file__).resolve().parent
 
@@ -22,21 +23,8 @@ def shift(t,seconds):
     return (instant(t)+timedelta(seconds=seconds)).astimezone(t.tzinfo)
 
 def read_observations(path, tz):
-    grouped={};invalid=0
-    with Path(path).open(encoding='utf-8-sig',newline='') as stream:
-        reader=csv.DictReader(stream)
-        if not {'timestamp','free_spaces','total_spaces'}.issubset(reader.fieldnames or []):
-            raise ValueError('Required CSV columns are missing')
-        for row in reader:
-            try:
-                t=datetime.fromisoformat(row['timestamp'])
-                if t.tzinfo is None:raise ValueError('Timestamp needs timezone offset')
-                y=float(row['free_spaces']);capacity=float(row['total_spaces'])
-                if not math.isfinite(y) or not math.isfinite(capacity) or capacity<=0:raise ValueError('Nonfinite reading')
-                grouped.setdefault(instant(t),[]).append((y,capacity))
-            except (ValueError,TypeError,KeyError):invalid+=1
-    readings=[dict(time=t.astimezone(tz),free=statistics.median(x[0] for x in values),capacity=statistics.median(x[1] for x in values)) for t,values in sorted(grouped.items())]
-    return readings,invalid
+    readings, diagnostics, _ = read_csv(path, tz)
+    return readings, diagnostics['invalid_rows']
 
 def baseline(history,target,cfg):
     minute=target.hour*60+target.minute
@@ -76,8 +64,8 @@ def build_payload(csv_path,cfg,now=None,revision=None):
               source_repository=cfg['source_repository'],source_revision=revision,
               source_sha256=hashlib.sha256(Path(csv_path).read_bytes()).hexdigest(),quality={})
 
-    readings, invalid = read_observations(csv_path, tz)
-    data["quality"]["invalid_rows"] = invalid
+    readings, diagnostics, latest_invalid = read_csv(csv_path, tz)
+    data['quality'] = diagnostics
 
     if not readings:
         return data
@@ -91,8 +79,6 @@ def build_payload(csv_path,cfg,now=None,revision=None):
         raw_readings, cfg
     )
 
-    data["quality"]["clipped_rows"] = clipped
-    data["quality"]["rejected_rows"] = rejected
 
     origin = raw_current["time"]
     age = elapsed(now, origin)
@@ -115,7 +101,8 @@ def build_payload(csv_path,cfg,now=None,revision=None):
     data["current"] = dict(
         timestamp=origin.isoformat(),
         free_spaces=raw_current["free"],
-        total_spaces=raw_current["capacity"]
+        total_spaces=raw_current["capacity"],
+        model_free_spaces=normalize_free(raw_current['free'])
     )
 
     data["history"] = [
@@ -134,8 +121,8 @@ def build_payload(csv_path,cfg,now=None,revision=None):
     reason=None
     if age < -cfg['future_clock_tolerance_seconds']:reason='future_timestamp'
     elif age>cfg['freshness_seconds']:reason='stale_observation'
-    elif current is None:
-        reason = 'capacity_anomaly'
+    elif current is None or (latest_invalid is not None and latest_invalid > instant(origin)):
+        reason = 'invalid_latest_observation'
     elif instant(origin)<instant(datetime.fromisoformat(cfg['parameters_available_from'])):reason='parameters_not_available'
     elif len({x['time'].date() for x in history})<cfg['minimum_history_days']:reason='insufficient_calendar_history'
     elif not recent_history_ok(readings,origin,cfg):reason='insufficient_recent_history'
@@ -164,7 +151,7 @@ def build_payload(csv_path,cfg,now=None,revision=None):
         data['predictions'].append(dict(horizon_minutes=h,target_time=target.isoformat(),free_spaces=value,
                                        full=value<=0,warning=value<=item['warning_cutoff'],warning_cutoff=item['warning_cutoff']))
         candidate_history,target_policy=baseline_history(history,target,calendar)
-        candidate=baseline(candidate_history,target,cfg)+item['alpha']*(current['free']-shadow_now)
+        candidate=normalize_free(baseline(candidate_history,target,cfg)+item['alpha']*(current['free']-shadow_now))
         data['shadow_predictions'].append(dict(horizon_minutes=h,target_time=target.isoformat(),free_spaces=candidate,
                                               now_calendar_policy=now_policy,target_calendar_policy=target_policy,
                                               note='Research candidate only; not displayed as operational forecast'))
@@ -173,10 +160,8 @@ def build_payload(csv_path,cfg,now=None,revision=None):
 
 
 def normalize_observations(readings, cfg):
-    capacity = cfg["capacity"]
-    tolerance = cfg["observation_tolerance_spaces"]
-    capacity_tolerance = cfg["reported_capacity_tolerance_spaces"]
-
+    if cfg['capacity'] != CAPACITY:
+        raise ValueError('This normalization policy requires capacity 1300')
     normalized = []
     clipped = 0
     rejected = 0
@@ -185,15 +170,11 @@ def normalize_observations(readings, cfg):
         free = row["free"]
         reported_capacity = row["capacity"]
 
-        if (
-            free < -tolerance
-            or free > capacity + tolerance
-            or abs(reported_capacity - capacity) > capacity_tolerance
-        ):
+        if not math.isfinite(free) or not math.isfinite(reported_capacity) or reported_capacity <= 0:
             rejected += 1
             continue
 
-        adjusted = max(0.0, min(float(capacity), free))
+        adjusted = normalize_free(free)
 
         if adjusted != free:
             clipped += 1
@@ -205,11 +186,25 @@ def normalize_observations(readings, cfg):
 
 
 def main():
-    parser=argparse.ArgumentParser();parser.add_argument('--csv',default='data/parking.csv');parser.add_argument('--config',default=str(ROOT/'config.json'));parser.add_argument('--out',default='site/data/prediction.json');parser.add_argument('--now');parser.add_argument('--revision');args=parser.parse_args()
+    parser=argparse.ArgumentParser();parser.add_argument('--csv',default='data/parking.csv');parser.add_argument('--config',default=str(ROOT/'config.json'));parser.add_argument('--out',default='site/data/prediction.json');parser.add_argument('--now');parser.add_argument('--revision');parser.add_argument('--state');parser.add_argument('--online-config',default=str(ROOT/'online_config.json'));args=parser.parse_args()
     cfg=json.loads(Path(args.config).read_text(encoding='utf-8'))
     now=datetime.fromisoformat(args.now) if args.now else None
     if now is not None and now.tzinfo is None:raise ValueError('--now must include UTC offset')
-    result=build_payload(args.csv,cfg,now,args.revision)
+    result=None
+    online_failure=None
+    if args.state:
+        try:
+            options=json.loads(Path(args.online_config).read_text(encoding='utf-8'))
+            if options['mode']=='shadow':
+                from online_export import cached_payload
+                result=cached_payload(args.csv,args.state,cfg,options,now,args.revision)
+        except Exception as exc:
+            # Optional learning/export failure must not stop the known-good
+            # fixed M3 path. Interrupts/SystemExit are deliberately not caught.
+            online_failure=type(exc).__name__
+            print('Online checkpoint unavailable; using fixed M3 fallback:',online_failure)
+    if result is None:result=build_payload(args.csv,cfg,now,args.revision)
+    if online_failure:result['online']=dict(mode='fallback',reason=online_failure,operational_model='fixed_alpha_M3')
     path=Path(args.out);path.parent.mkdir(parents=True,exist_ok=True)
     temporary=path.with_suffix('.tmp');temporary.write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False),encoding='utf-8');temporary.replace(path)
     print('Published payload:',result['status'],result['reason'] or 'fresh', 'origin:',result.get('forecast_origin'))

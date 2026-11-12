@@ -18,6 +18,5 @@
   ],
   "source_repository": "https://github.com/dngnyoo/tdeck-parking-data",
   "selection_basis": "Phase 2 validation 2026-09-17 through 2026-09-23, MAE; warning cutoff chosen on validation full-capacity F1",
-  "observation_tolerance_spaces": 100,
-  "reported_capacity_tolerance_spaces": 100
+  "normalization_policy": "finite_clip_1300_v1"
 }

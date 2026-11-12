@@ -104,14 +104,21 @@ class PredictorTests(unittest.TestCase):
         self.assertEqual(p['current']['free_spaces'], 1400)
         self.assertGreater(p['quality']['clipped_rows'], 0)
 
-        # Beyond the upper boundary, prediction is blocked.
-        self.rows[-1][1] = 1401
+        for free in [1401, 9000, -148, -1000000]:
+            self.rows[-1][1] = free
+            self.rows[-1][2] = 9999
+            self.save()
+            p = build_payload(self.path, CFG, self.origin)
+            self.assertEqual(p['status'], 'ok')
+            self.assertEqual(p['current']['model_free_spaces'], max(0,min(1300,free)))
+            self.assertTrue(all(0 <= x['free_spaces'] <= 1300 for x in p['predictions']))
+
+    def test_invalid_latest_capacity_is_not_replaced(self):
+        self.rows[-1][2] = 0
         self.save()
-
         p = build_payload(self.path, CFG, self.origin)
-
-        self.assertEqual(p['status'], 'unavailable')
-        self.assertEqual(p['reason'], 'capacity_anomaly')
+        self.assertEqual(p['reason'], 'invalid_latest_observation')
+        self.assertFalse(p['predictions'])
 
     def test_dst_elapsed_horizon(self):
         fall=datetime.fromisoformat('2026-11-01T01:50:00-04:00').astimezone(TZ)

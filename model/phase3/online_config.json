@@ -1,0 +1,14 @@
+{
+  "mode": "off",
+  "state_branch": "model-state",
+  "ingestion_encoding": "utf8_lf_v1",
+  "outcome_tolerance_seconds": 90,
+  "alpha_min": 0.0,
+  "alpha_max": 2.0,
+  "optimizer_half_life_days": 14,
+  "prior_strength": 200,
+  "prior_feature_scale_spaces": 100,
+  "minimum_training_pairs": 20,
+  "model_version": "M3-online-v1",
+  "parameter_status": "unvalidated_candidates_not_for_promotion"
+}
