@@ -90,8 +90,9 @@ class GitHubState:
         remote = json.loads(Path(str(path)+'.remote').read_text(encoding='utf-8'))
         if raw == remote['content']:
             return False
-        self.api('PUT', '/contents/'+STATE_PATH, dict(message='Update incremental M3 shadow checkpoint',
+        response=self.api('PUT', '/contents/'+STATE_PATH, dict(message='Update incremental M3 checkpoint',
                  branch=self.branch, sha=remote['sha'], content=base64.b64encode(raw.encode()).decode()))
+        atomic_write(str(path)+'.remote',json.dumps(dict(sha=response['content']['sha'],content=raw,head=response['commit']['sha'])))
         return True
 
     def initialize(self, path, cfg, options, calendar):
@@ -105,7 +106,7 @@ class GitHubState:
         # workflow source. POST ref fails if already initialized; no overwrite.
         blob = self.api('POST', '/git/blobs', dict(content=base64.b64encode(raw.encode()).decode(), encoding='base64'))
         tree = self.api('POST', '/git/trees', dict(tree=[dict(path=STATE_PATH,mode='100644',type='blob',sha=blob['sha'])]))
-        commit = self.api('POST', '/git/commits', dict(message='Initialize incremental M3 shadow checkpoint',tree=tree['sha'],parents=[]))
+        commit = self.api('POST', '/git/commits', dict(message='Initialize incremental M3 checkpoint',tree=tree['sha'],parents=[]))
         self.api('POST', '/git/refs', dict(ref='refs/heads/'+self.branch,sha=commit['sha']))
 
 
@@ -119,7 +120,7 @@ def main():
     args = p.parse_args()
     cfg = json.loads(Path(args.config).read_text(encoding='utf-8'))
     options = json.loads(Path(args.online_config).read_text(encoding='utf-8'))
-    if options['mode'] != 'shadow':
+    if options['mode'] not in ['shadow','production']:
         p.error('State persistence is disabled; activation requires Phase D approval')
     token = os.environ.get('GH_TOKEN')
     if not token: p.error('GH_TOKEN is required in the environment')

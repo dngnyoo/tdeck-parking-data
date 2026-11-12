@@ -52,16 +52,15 @@ jobs:
         run: node --test model/phase3/tests/state.test.mjs
       - name: Read online activation mode
         id: online_mode
-        continue-on-error: true
         run: |
-          python -c "import json,os; mode=json.load(open('model/phase3/online_config.json'))['mode']; assert mode in ['off','shadow']; open(os.environ['GITHUB_OUTPUT'],'a').write('mode='+mode+'\n')"
+          python -c "import json,os; mode=json.load(open('model/phase3/online_config.json'))['mode']; assert mode in ['off','shadow','production']; open(os.environ['GITHUB_OUTPUT'],'a').write('mode='+mode+'\n')"
       # Phase B default is off. These steps cannot initialize state, change
       # environments, promote the candidate, or dispatch another workflow.
-      - name: Restore compatible shadow checkpoint
+      - name: Restore compatible online checkpoint
         id: restore_online
         timeout-minutes: 1
-        if: steps.online_mode.outputs.mode == 'shadow'
-        continue-on-error: true
+        if: steps.online_mode.outputs.mode == 'shadow' || steps.online_mode.outputs.mode == 'production'
+        continue-on-error: ${{ steps.online_mode.outputs.mode == 'shadow' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: python model/phase3/state_remote.py restore --state .online-artifacts/online_state.json
@@ -69,32 +68,43 @@ jobs:
         id: learn_online
         timeout-minutes: 1
         if: steps.restore_online.outcome == 'success'
-        continue-on-error: true
+        continue-on-error: ${{ steps.online_mode.outputs.mode == 'shadow' }}
         run: python model/phase3/update_online.py --state .online-artifacts/online_state.json
-      - name: Commit shadow checkpoint with conflict protection
+      - name: Commit online checkpoint with conflict protection
         id: save_online
         timeout-minutes: 1
         if: steps.learn_online.outcome == 'success'
-        continue-on-error: true
+        continue-on-error: ${{ steps.online_mode.outputs.mode == 'shadow' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: python model/phase3/state_remote.py save --state .online-artifacts/online_state.json
       - name: Export forecast without changing collector data
         env:
           ONLINE_READY: ${{ steps.save_online.outcome == 'success' }}
+          ONLINE_MODE: ${{ steps.online_mode.outputs.mode }}
         run: |
+          if [ "$ONLINE_MODE" = "production" ]; then
+            test "$ONLINE_READY" = "true"
+          fi
           if [ "$ONLINE_READY" = "true" ]; then
             python model/phase3/export_prediction.py --state .online-artifacts/online_state.json --revision "$(git rev-parse HEAD)"
           else
             python model/phase3/export_prediction.py --revision "$(git rev-parse HEAD)"
           fi
+      - name: Verify CSV is unchanged and record online integration evidence
+        run: |
+          git diff --exit-code -- data/parking.csv collect.py .github/workflows/collect.yml
+          python model/phase3/production_evidence.py --csv data/parking.csv --state .online-artifacts/online_state.json --prediction site/data/prediction.json --out .online-artifacts/production_evidence.json
       - name: Archive production and calendar-shadow forecasts
         uses: actions/upload-artifact@v4
         with:
           name: forecast-${{ github.run_id }}
-          path: site/data/prediction.json
+          path: |
+            site/data/prediction.json
+            .online-artifacts/production_evidence.json
           retention-days: 90
           if-no-files-found: error
+          include-hidden-files: true
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload static site

@@ -192,7 +192,12 @@ def main():
     if now is not None and now.tzinfo is None:raise ValueError('--now must include UTC offset')
     result=None
     online_failure=None
-    if args.state:
+    options=json.loads(Path(args.online_config).read_text(encoding='utf-8'))
+    if options['mode']=='production':
+        if not args.state:raise ValueError('Production online mode requires a persistent checkpoint')
+        from online_export import cached_payload
+        result=cached_payload(args.csv,args.state,cfg,options,now,args.revision)
+    elif args.state:
         try:
             options=json.loads(Path(args.online_config).read_text(encoding='utf-8'))
             if options['mode']=='shadow':

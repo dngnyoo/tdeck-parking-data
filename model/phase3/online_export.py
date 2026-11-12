@@ -1,10 +1,11 @@
 """Read-only export from an authenticated committed online checkpoint.
 
-Operational predictions always retain fixed M3 alpha. Online alpha appears only
-in a separate shadow field and is never selected by the frontend.
+Production uses stored learned forecasts for all operational horizons. The
+historical shadow mode retains fixed-alpha operational predictions.
 """
 from datetime import datetime, timezone
 import hashlib
+import json
 from pathlib import Path
 
 from calendar_features import load_calendar, classify
@@ -28,6 +29,9 @@ def cached_payload(csv_path, state_path, cfg, options, now=None, revision=None):
     if checkpoint['offset'] != len(canonical_content) or checkpoint['prefix_sha256'] != hashlib.sha256(canonical_content).hexdigest():
         raise StateError('Checkpoint does not cover this exact CSV snapshot')
     model = OnlineModel(cfg, options, calendar, state)
+    production=options['mode']=='production'
+    receipt_path=Path(str(state_path)+'.remote')
+    receipt=json.loads(receipt_path.read_text(encoding='utf-8')) if receipt_path.exists() else {}
     if state['last_event'] is None:
         raise StateError('Empty checkpoint')
     origin = from_stamp(state['last_event'], model.tz)
@@ -42,13 +46,15 @@ def cached_payload(csv_path, state_path, cfg, options, now=None, revision=None):
                 total_spaces=raw['capacity'], model_free_spaces=normalize_free(raw['free'])),
                 history=[dict(timestamp=from_stamp(r['timestamp'], model.tz).isoformat(), free_spaces=r['free']) for r in state['recent']],
                 predictions=[], shadow_predictions=[], online_shadow_predictions=[],
-                model='M3', parameters_available_from=cfg['parameters_available_from'],
+                model='M3-online' if production else 'M3', parameters_available_from=cfg['parameters_available_from'],
                 baseline_history_policy=cfg['baseline_history_policy'], source_repository=cfg['source_repository'],
                 source_revision=revision, source_sha256=digest, quality=quality,
                 forecast_origin=origin.isoformat(), valid_until=shift(origin,cfg['freshness_seconds']).isoformat(),
-                online=dict(mode='shadow', operational_model='fixed_alpha_M3', state_version=state['schema_version'],
+                online=dict(mode=options['mode'], operational_model='online_alpha_M3' if production else 'fixed_alpha_M3', state_version=state['schema_version'],
                             model_version=state['model_version'], trained_through=state['last_successful_update'],
-                            parameter_status=options['parameter_status']))
+                            parameter_status=options['parameter_status'],configuration_fingerprint=state['fingerprint'],
+                            state_revision=receipt.get('head'),state_checksum=json.loads(Path(state_path).read_text(encoding='utf-8'))['checksum'],
+                            training_counts={h:o['pairs'] for h,o in state['optimizers'].items()}))
     data['calendar'] = classify(origin.date(), calendar)
     data['calendar']['prediction_policy'] = 'shadow_only'
     age = elapsed(now, origin)
@@ -65,18 +71,22 @@ def cached_payload(csv_path, state_path, cfg, options, now=None, revision=None):
     b_now, _ = model.baseline(origin)
     shadow_now, now_policy = model.baseline(origin, True)
     x = normalize_free(raw['free'])-b_now
+    learned={p['horizon']:p for p in state['last_forecasts'] if p['origin']==state['last_event']}
+    if production and set(learned)!={h['minutes'] for h in cfg['horizons']}:
+        raise StateError('Missing operational online forecasts; fixed model is not substituted')
     for h in cfg['horizons']:
         target = shift(origin,h['minutes']*60)
         baseline, _ = model.baseline(target)
-        value = normalize_free(baseline+h['alpha']*x)
+        value = learned[h['minutes']]['prediction'] if production else normalize_free(baseline+h['alpha']*x)
         data['predictions'].append(dict(horizon_minutes=h['minutes'], target_time=target.isoformat(),free_spaces=value,
                                        full=value<=0, warning=value<=h['warning_cutoff'],warning_cutoff=h['warning_cutoff']))
+        if production:data['predictions'][-1]['alpha']=learned[h['minutes']]['alpha']
         shadow_target, policy = model.baseline(target, True)
         candidate = normalize_free(shadow_target+h['alpha']*(normalize_free(raw['free'])-shadow_now))
         data['shadow_predictions'].append(dict(horizon_minutes=h['minutes'],target_time=target.isoformat(),free_spaces=candidate,
                                               now_calendar_policy=now_policy,target_calendar_policy=policy,
                                               note='Calendar research candidate only; not displayed as operational forecast'))
-    for p in state['last_forecasts']:
+    for p in ([] if production else state['last_forecasts']):
         if p['origin'] != state['last_event']:
             continue
         data['online_shadow_predictions'].append(dict(horizon_minutes=p['horizon'],target_time=from_stamp(p['target'],model.tz).isoformat(),

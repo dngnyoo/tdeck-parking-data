@@ -1,5 +1,11 @@
 # Persistent incremental M3 — Phase B
 
+> Historical Phase B/C design below. Phase D is explicitly approved for direct
+> production: mode production, baseline half-life14 days (Phase C used7), optimizer
+> half-life14 days, prior strength50, alpha bounds[0,2], all four horizons. Online
+> forecasts now populate operational predictions. No automatic fixed-model switch
+> occurs in production mode. See [Phase D report](../../docs/online-learning/phase_d/REPORT_KO.md).
+
 Implementation only: `online_config.json` ships with **mode off**. No state branch
 is created, no online writer runs, and the frontend continues to use fixed-alpha
 `predictions`. Phase C validation and Phase D activation require separate review.

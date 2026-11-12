@@ -22,7 +22,7 @@ def main():
     args = p.parse_args()
     cfg = json.loads(Path(args.config).read_text(encoding='utf-8'))
     options = json.loads(Path(args.online_config).read_text(encoding='utf-8'))
-    if options['mode'] != 'shadow' and not args.offline:
+    if options['mode'] not in ['shadow','production'] and not args.offline:
         print('Online learning is off; no state read or written')
         return
     start = time.perf_counter()

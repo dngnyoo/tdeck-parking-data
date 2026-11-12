@@ -36,7 +36,7 @@ class OnlineTests(unittest.TestCase):
         self.path = Path(self.tmp.name)/'parking.csv'
         self.state_path = Path(self.tmp.name)/'state.json'
         self.cfg = {**CFG, 'minimum_history_days':2, 'parameters_available_from':'2026-01-01T00:00:00-05:00'}
-        self.options = {**OPTIONS, 'minimum_training_pairs':3}
+        self.options = {**OPTIONS, 'minimum_training_pairs':3, 'mode':'shadow'}
         self.rows = []
         for day in range(6):
             start = datetime(2026,10,28+day if day < 4 else 31,8,tzinfo=TZ) if day < 4 else datetime(2026,11,day-3,8,tzinfo=TZ)
@@ -313,7 +313,8 @@ class OnlineTests(unittest.TestCase):
 
     def test_disabled_cli_does_not_create_state_and_corrupt_export_falls_back(self):
         untouched=Path(self.tmp.name)/'never-created.json'
-        run=subprocess.run([sys.executable,str(ROOT/'update_online.py'),'--state',str(untouched)],capture_output=True,text=True)
+        off=Path(self.tmp.name)/'off.json';off.write_text(json.dumps({**OPTIONS,'mode':'off'}))
+        run=subprocess.run([sys.executable,str(ROOT/'update_online.py'),'--state',str(untouched),'--online-config',str(off)],capture_output=True,text=True)
         self.assertEqual(run.returncode,0,run.stderr)
         self.assertFalse(untouched.exists())
         self.state_path.write_text('{broken')
@@ -329,6 +330,24 @@ class OnlineTests(unittest.TestCase):
         self.assertEqual(len(payload['predictions']),4)
         self.assertEqual(payload['online']['mode'],'fallback')
         self.assertEqual(payload['model'],'M3')
+
+    def test_production_uses_learned_forecasts_and_never_switches_to_fixed(self):
+        engine=self.model();ingest(engine,self.path);save_state(self.state_path,engine.state,self.cfg,self.options,CAL)
+        origin=datetime.fromisoformat(engine.state['last_event'])
+        production={**self.options,'mode':'production'}
+        payload=cached_payload(self.path,self.state_path,self.cfg,production,origin)
+        self.assertEqual(payload['model'],'M3-online')
+        self.assertEqual(payload['online']['mode'],'production')
+        for value,expected in zip(payload['predictions'],engine.state['last_forecasts']):
+            self.assertEqual(value['free_spaces'],expected['prediction']);self.assertEqual(value['alpha'],expected['alpha'])
+        self.assertEqual(payload['online_shadow_predictions'],[])
+        config=Path(self.tmp.name)/'cfg.json';config.write_text(json.dumps(self.cfg))
+        options=Path(self.tmp.name)/'prod.json';options.write_text(json.dumps(production))
+        self.state_path.write_text('{bad')
+        output=Path(self.tmp.name)/'must-not-be-fixed.json'
+        run=subprocess.run([sys.executable,str(ROOT/'export_prediction.py'),'--csv',str(self.path),
+            '--state',str(self.state_path),'--config',str(config),'--online-config',str(options),'--out',str(output)],capture_output=True,text=True)
+        self.assertNotEqual(run.returncode,0);self.assertFalse(output.exists())
 
     def test_evaluation_harness_uses_clipped_labels_and_separates_coverage(self):
         from evaluate_online import evaluate

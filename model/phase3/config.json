@@ -6,7 +6,7 @@
   "trend_match_tolerance_seconds": 90,
   "maximum_history_gap_seconds": 600,
   "minimum_history_days": 14,
-  "baseline_half_life_days": 7,
+  "baseline_half_life_days": 14,
   "baseline_window_minutes": 15,
   "baseline_history_policy": "completed_local_days",
   "parameters_available_from": "2026-09-24T00:00:00-04:00",
