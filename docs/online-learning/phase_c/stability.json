@@ -1,0 +1,94 @@
+{
+  "source_sha256": "0517ab28a67a12ad3bf5f85ce3d7b20a31f8579812ab5fe7fc2e37724c1b647a",
+  "selection_sha256": "08f777cfa654d1ed16c2f621c34dac4d10247a477d21e7fe19fa45e212e94d7c",
+  "initial_rows": 16015,
+  "test_rows": 4068,
+  "initialization_seconds": 18.23682649998227,
+  "final_state_bytes": 775540,
+  "reference_state_sha256": "467265fddf270c7a47722502adae4544fddaf085a8c7ece887608bd9ab8db682",
+  "final_optimizers": {
+    "15": {
+      "alpha": 0.993250615084893,
+      "sxx": 16.662836142867462,
+      "sxz": 16.548375388519553,
+      "pairs": 13783,
+      "expired": 49,
+      "last_update": "2026-11-12T04:55:13+00:00",
+      "clipped_updates": 0
+    },
+    "30": {
+      "alpha": 0.985829897052606,
+      "sxx": 16.62342678950504,
+      "sxz": 16.38367878240917,
+      "pairs": 13770,
+      "expired": 59,
+      "last_update": "2026-11-12T04:55:13+00:00",
+      "clipped_updates": 0
+    },
+    "60": {
+      "alpha": 0.9701045576735516,
+      "sxx": 16.583116980695,
+      "sxz": 16.07851255798386,
+      "pairs": 13749,
+      "expired": 74,
+      "last_update": "2026-11-12T04:55:13+00:00",
+      "clipped_updates": 0
+    },
+    "120": {
+      "alpha": 0.9387105593119968,
+      "sxx": 16.509022481020647,
+      "sxz": 15.553025253276886,
+      "pairs": 13708,
+      "expired": 103,
+      "last_update": "2026-11-12T04:55:13+00:00",
+      "clipped_updates": 0
+    }
+  },
+  "scenarios": [
+    {
+      "scenario": "all_test_rows_in_one_catchup",
+      "new_rows": 4068,
+      "seconds": 6.494365399994422,
+      "state_sha256": "467265fddf270c7a47722502adae4544fddaf085a8c7ece887608bd9ab8db682",
+      "equals_uninterrupted": true
+    },
+    {
+      "scenario": "restart_every_12_hours",
+      "batches": 28,
+      "new_rows": 4068,
+      "seconds": 19.452767400012817,
+      "state_sha256": "467265fddf270c7a47722502adae4544fddaf085a8c7ece887608bd9ab8db682",
+      "equals_uninterrupted": true
+    },
+    {
+      "scenario": "corrupt_current_restore_previous",
+      "new_rows": 4068,
+      "seconds": 3.432798099995125,
+      "recovered_previous": true,
+      "state_sha256": "467265fddf270c7a47722502adae4544fddaf085a8c7ece887608bd9ab8db682",
+      "equals_uninterrupted": true
+    },
+    {
+      "scenario": "unchanged_snapshot_five_restarts",
+      "new_rows": 0,
+      "median_seconds": 0.07393940002657473,
+      "equals_uninterrupted": true
+    },
+    {
+      "scenario": "both_checkpoints_corrupt_fixed_M3_fallback",
+      "returncode": 0,
+      "status": "ok",
+      "forecast_count": 4,
+      "equals_fixed_M3": true,
+      "seconds": 1.5346250000293367
+    },
+    {
+      "scenario": "historical_prefix_corruption",
+      "rejected": true,
+      "state_unchanged": true
+    }
+  ],
+  "source_unchanged": true,
+  "production_mode": "off",
+  "note": "Local real-data offline stress. No GitHub state branch, settings, or Pages deployment was changed."
+}

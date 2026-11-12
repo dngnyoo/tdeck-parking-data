@@ -6,6 +6,14 @@ is created, no online writer runs, and the frontend continues to use fixed-alpha
 The candidate settings are unvalidated; their implementation is not evidence of
 improved accuracy. Collection code, collection workflow and raw CSV are unchanged.
 
+Phase C offline validation is now documented in
+[`docs/online-learning/phase_c/REPORT_KO.md`](../../docs/online-learning/phase_c/REPORT_KO.md).
+The validation-selected prior strength50 is stored only in research results;
+production configuration remains off with its original Phase B settings. The
+test found improved120-minute MAE but worse15/30/60-minute MAE, so this is not
+approval for general promotion. See the report for clipping cohorts, warning
+metrics, day-block uncertainty, baseline parity and real-data recovery stress.
+
 ## Observation contract
 
 The shared `observations.py` policy is `finite_clip_1300_v1`. Every finite free

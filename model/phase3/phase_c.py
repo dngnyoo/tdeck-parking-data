@@ -30,6 +30,10 @@ def digest(value):
     return hashlib.sha256(value).hexdigest()
 
 
+def protocol_digest():
+    return digest(canonical_csv_bytes(PROTOCOL.read_bytes()))
+
+
 def settings():
     cfg=json.loads((ROOT/'config.json').read_text(encoding='utf-8'))
     options=json.loads((ROOT/'online_config.json').read_text(encoding='utf-8'))
@@ -118,7 +122,7 @@ def prepare(csv_path,end,cache_path):
         if legacy_valid:legacy_previous.append(normalized)
     meta=dict(end=end,source_sha256=digest(Path(csv_path).read_bytes()),
               canonical_source_sha256=digest(canonical_csv_bytes(Path(csv_path).read_bytes())),
-              protocol_sha256=digest(PROTOCOL.read_bytes()),cfg=cfg,options=options,
+              protocol_sha256=protocol_digest(),cfg=cfg,options=options,
               rows=len(raw),start=raw[0]['time'].isoformat(),last=raw[-1]['time'].isoformat(),
               quality=quality,seconds=time.perf_counter()-tick,engine_update_seconds=update_seconds,
               state_bytes=len(canonical(engine.state).encode()),baseline_audits=audits,
@@ -217,7 +221,7 @@ def select(cache_path,out):
     out=Path(out);out.mkdir(parents=True,exist_ok=True)
     selection=dict(validation_start='2026-10-15',validation_end='2026-10-28',test_start='2026-10-29',test_end='2026-11-11',
                    selected_options=best_options,objective='equal-weight mean of four validation MAEs on all matched pairs',
-                   validation_objective=best[0],candidate_count=len(candidates),protocol_sha256=digest(PROTOCOL.read_bytes()),
+                   validation_objective=best[0],candidate_count=len(candidates),protocol_sha256=protocol_digest(),
                    validation_cache_sha256=digest(Path(cache_path).read_bytes()),validation_source_sha256=cache['metadata']['source_sha256'],
                    cached_replay_vs_real_engine_max_error=error,selected_before_test_scoring=True,
                    frozen_at=datetime.now(timezone.utc).isoformat())
@@ -257,7 +261,7 @@ def paired_intervals(rows):
 def test(cache_path,selection_path,out):
     cache=load_cache(cache_path);selection=json.loads(Path(selection_path).read_text())
     if cache['metadata']['end']!='2026-11-11' or selection['validation_end']!='2026-10-28':raise ValueError('Invalid frozen evaluation periods')
-    if selection['protocol_sha256']!=digest(PROTOCOL.read_bytes()):raise ValueError('Protocol changed after selection')
+    if selection['protocol_sha256']!=protocol_digest():raise ValueError('Protocol changed after selection')
     cfg,defaults,_=settings()
     _,_,parity=replay(cache,defaults,'2026-10-29','2026-11-11')
     if parity>1e-10:raise AssertionError('Real engine/cache mismatch')
@@ -267,7 +271,7 @@ def test(cache_path,selection_path,out):
     write_csv(out/'test_metrics.csv',metric_rows(rows,cfg))
     write_csv(out/'paired_day_bootstrap.csv',paired_intervals(rows))
     json_file(out/'test_manifest.json',dict(selection_sha256=digest(Path(selection_path).read_bytes()),
-              test_cache_sha256=digest(Path(cache_path).read_bytes()),protocol_sha256=digest(PROTOCOL.read_bytes()),
+              test_cache_sha256=digest(Path(cache_path).read_bytes()),protocol_sha256=protocol_digest(),
               source_metadata=cache['metadata'],selected_options=selection['selected_options'],final_optimizers=optim,
               matched_pairs=len(rows),cached_replay_vs_real_engine_max_error=parity,
               online_mode_unchanged=defaults['mode'],scored_at=datetime.now(timezone.utc).isoformat()))
