@@ -1,0 +1,120 @@
+{
+  "scenario": {
+    "model": "A",
+    "layout": "A_equal8",
+    "preference": "moderate",
+    "duration": "standard",
+    "age": "mixed",
+    "scale": "medium"
+  },
+  "config": {
+    "capacity": 1300,
+    "layouts": {
+      "A_equal8": [
+        163,
+        163,
+        163,
+        163,
+        162,
+        162,
+        162,
+        162
+      ],
+      "B_unequal8": [
+        120,
+        160,
+        180,
+        180,
+        180,
+        180,
+        160,
+        140
+      ],
+      "C_unequal7": [
+        140,
+        180,
+        200,
+        220,
+        200,
+        190,
+        170
+      ]
+    },
+    "primary_dates": [
+      "2026-09-29",
+      "2026-10-13"
+    ],
+    "primary_reps": 1000,
+    "sensitivity_reps": 250,
+    "seed": 20261013,
+    "gap_minutes": 15,
+    "jump_threshold": 200,
+    "jump_window_minutes": 10,
+    "smoothing_minutes": 15,
+    "derivative_a_vehicles_per_minute": 0.15,
+    "derivative_b": 0.35,
+    "derivative_c_minutes": 3.0,
+    "preference": {
+      "weak": 0.15,
+      "moderate": 0.65,
+      "strong": 1.5
+    },
+    "duration": {
+      "standard": {
+        "mean_minutes": 240,
+        "cv": 0.55
+      },
+      "short": {
+        "mean_minutes": 120,
+        "cv": 0.65
+      },
+      "long": {
+        "mean_minutes": 360,
+        "cv": 0.55
+      }
+    },
+    "initial_age_hours": {
+      "young": 1,
+      "mixed": 4,
+      "old": 8
+    },
+    "turnover_scales": {
+      "low": 0.3,
+      "medium": 1.0,
+      "high": 3.0
+    }
+  },
+  "replications": 1000,
+  "seed": 20261013,
+  "policy": "exclude",
+  "audit": {
+    "sha256": "86598bdcf8e3223553954047dd64faeb2b378f50af10c5304b5513c238cf7f97",
+    "rows": 294,
+    "start": "2026-09-27T00:00:18-04:00",
+    "end": "2026-09-27T23:55:12-04:00",
+    "negative": 0,
+    "zeros": 0,
+    "impossible": 0,
+    "duplicate_rows": 0,
+    "min_free": 1197,
+    "max_free": 1215,
+    "gaps_gt15min": 0,
+    "intervals_gt10min": 0,
+    "median_interval_seconds": 300.0,
+    "max_gap_seconds": 339.0,
+    "jumps": 0,
+    "invalid_rows": 0,
+    "nominal_capacities": [
+      1300
+    ]
+  },
+  "seconds": 56.73247599997558,
+  "intervals": 293,
+  "initializations": 1,
+  "arrivals": 364602,
+  "departures": 353602,
+  "early_departures": 142472,
+  "delayed_due": 8711325,
+  "clipped_turnover": 0,
+  "conservation_checks": 294000
+}
