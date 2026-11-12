@@ -1,0 +1,29 @@
+{
+  "validation_start": "2026-10-15",
+  "validation_end": "2026-10-28",
+  "test_start": "2026-10-29",
+  "test_end": "2026-11-11",
+  "selected_options": {
+    "mode": "off",
+    "state_branch": "model-state",
+    "ingestion_encoding": "utf8_lf_v1",
+    "outcome_tolerance_seconds": 90,
+    "alpha_min": 0.0,
+    "alpha_max": 2.0,
+    "optimizer_half_life_days": 14,
+    "prior_strength": 50,
+    "prior_feature_scale_spaces": 100,
+    "minimum_training_pairs": 20,
+    "model_version": "M3-online-v1",
+    "parameter_status": "unvalidated_candidates_not_for_promotion"
+  },
+  "objective": "equal-weight mean of four validation MAEs on all matched pairs",
+  "validation_objective": 8.930004902074215,
+  "candidate_count": 27,
+  "protocol_sha256": "61cc61a131f1431b145a430d3c3adb3a29d65aeca2671ec3ce09674bf0fca211",
+  "validation_cache_sha256": "f8253e47650e0ecca96af4659ca637071b2834baaa13d0ede9aaa615bf0bb425",
+  "validation_source_sha256": "c9c2a99ba21eb13fdc85c1926e02cf886e52e039d3e4b3d301ca69139bdc518c",
+  "cached_replay_vs_real_engine_max_error": 0.0,
+  "selected_before_test_scoring": true,
+  "frozen_at": "2026-11-12T19:33:34.715463+00:00"
+}

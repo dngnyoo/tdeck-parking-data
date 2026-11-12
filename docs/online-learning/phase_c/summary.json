@@ -1,0 +1,54 @@
+{
+  "question": "Does online alpha improve fixed-alpha M3?",
+  "answer": "Horizon-dependent: 120-minute MAE improves, 15/30/60-minute MAE worsens.",
+  "per_horizon": {
+    "15": {
+      "fixed_mae": 5.032623333093555,
+      "online_mae": 5.07736938128598,
+      "mae_change_percent": 0.8891197538703821
+    },
+    "30": {
+      "fixed_mae": 7.5101561640096755,
+      "online_mae": 7.589226018267211,
+      "mae_change_percent": 1.05283901600417
+    },
+    "60": {
+      "fixed_mae": 11.050856665873145,
+      "online_mae": 11.257891292829392,
+      "mae_change_percent": 1.8734712901996353
+    },
+    "120": {
+      "fixed_mae": 22.358994852003985,
+      "online_mae": 15.722407754920715,
+      "mae_change_percent": -29.681956371524677
+    }
+  },
+  "equal_horizon_mean_mae_fixed": 11.48815775374509,
+  "equal_horizon_mean_mae_online": 9.911723611825824,
+  "daily_online_mae_wins_out_of_14": {
+    "15": 2,
+    "30": 3,
+    "60": 3,
+    "120": 14
+  },
+  "selected_options": {
+    "mode": "off",
+    "state_branch": "model-state",
+    "ingestion_encoding": "utf8_lf_v1",
+    "outcome_tolerance_seconds": 90,
+    "alpha_min": 0.0,
+    "alpha_max": 2.0,
+    "optimizer_half_life_days": 14,
+    "prior_strength": 50,
+    "prior_feature_scale_spaces": 100,
+    "minimum_training_pairs": 20,
+    "model_version": "M3-online-v1",
+    "parameter_status": "unvalidated_candidates_not_for_promotion"
+  },
+  "clean_definition": "Both raw origin and matched raw outcome within [0,1300]; training history still includes all normalized observations.",
+  "recommended_next_step": "Consider explicitly approved shadow observation focused on 120-minute forecasts; no operational promotion.",
+  "online_mode": "off",
+  "selection_frozen_commit": "afcdf38da",
+  "final_test_used_for_selection": false,
+  "no_production_or_pages_changes": true
+}

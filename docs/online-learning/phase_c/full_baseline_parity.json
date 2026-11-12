@@ -1,0 +1,11 @@
+{
+  "checked_final_test_forecasts": 15755,
+  "checked_origins": 3975,
+  "exact_batch_queries": 4457,
+  "memoization": "per origin-date cutoff, target weekday/minute",
+  "max_baseline_or_origin_feature_error": 1.1368683772161603e-12,
+  "max_fixed_prediction_error": 1.5916157281026244e-12,
+  "max_online_prediction_error": 1.3642420526593924e-12,
+  "seconds": 26.498457200010307,
+  "batch_query_seconds": 26.226782002078835
+}

@@ -1,0 +1,49 @@
+{
+  "source_commit": "06237c8c2737c19631d8b3c1455925cf23d962b7",
+  "source_rows": 20259,
+  "used_rows": 20083,
+  "test_rows": 4068,
+  "used_start": "2026-09-03T12:21:57-04:00",
+  "used_end": "2026-11-11T23:55:13-05:00",
+  "test_start": "2026-10-29T00:00:19-04:00",
+  "test_end": "2026-11-11T23:55:13-05:00",
+  "test_negative": 125,
+  "test_exact_zero": 0,
+  "test_above_capacity": 0,
+  "test_reported_capacity_mismatch": 2394,
+  "full_dates": [
+    "2026-11-04",
+    "2026-11-09",
+    "2026-11-10",
+    "2026-11-11"
+  ],
+  "full_episodes": [
+    {
+      "start": "2026-11-04T12:25:13-05:00",
+      "end": "2026-11-04T13:55:12-05:00",
+      "observations": 20
+    },
+    {
+      "start": "2026-11-09T11:50:15-05:00",
+      "end": "2026-11-09T13:05:15-05:00",
+      "observations": 16
+    },
+    {
+      "start": "2026-11-09T13:30:17-05:00",
+      "end": "2026-11-09T13:50:14-05:00",
+      "observations": 5
+    },
+    {
+      "start": "2026-11-10T11:25:14-05:00",
+      "end": "2026-11-10T14:55:13-05:00",
+      "observations": 44
+    },
+    {
+      "start": "2026-11-11T11:40:14-05:00",
+      "end": "2026-11-11T14:50:13-05:00",
+      "observations": 40
+    }
+  ],
+  "matched_clean_pairs": 15150,
+  "matched_all_pairs": 15755
+}

@@ -1,0 +1,68 @@
+{
+  "phase": "B implementation verification only; no accuracy or promotion claim",
+  "checked_at": "2026-11-12T19:15:21.157995+00:00",
+  "python": "3.12.14",
+  "source_sha256": "c9037a61f47d21613096f61b798e6144a355a95f054fa4b0397ce9f4c62f03e6",
+  "canonical_source_sha256": "4ef0c6f914d61015fc619417704ec1ba9966666e4683fc4ec65a9ec305fd4820",
+  "source_rows": 20001,
+  "state_bytes": 761811,
+  "baseline_buckets": 14402,
+  "pending_forecasts": 31,
+  "clipping": {
+    "clipped_to_capacity": 0,
+    "clipped_to_zero": 329,
+    "input_rows": 20001,
+    "invalid_reasons": {},
+    "invalid_rows": 0,
+    "normalization_policy": "finite_clip_1300_v1",
+    "reported_capacity_mismatch": 2312
+  },
+  "fixed_M3_batch_cached_max_difference_spaces": 2.8421709430404007e-13,
+  "calendar_shadow_batch_cached_max_difference_spaces": 2.8421709430404007e-13,
+  "unchanged_input_median_restore_ingest_check_seconds": 0.10511689999839291,
+  "synthetic_one_row_update_and_atomic_save_seconds": 0.20679190004011616,
+  "synthetic_one_row_ingestion": {
+    "new_rows": 1,
+    "new_bytes": 39
+  },
+  "raw_csv_unchanged": true,
+  "optimizers": {
+    "120": {
+      "alpha": 0.9263997248490329,
+      "clipped_updates": 0,
+      "expired": 103,
+      "last_update": "2026-11-11T22:10:15+00:00",
+      "pairs": 13640,
+      "sxx": 16.230797554400564,
+      "sxz": 15.244963459304298
+    },
+    "15": {
+      "alpha": 0.9935268519945978,
+      "clipped_updates": 0,
+      "expired": 49,
+      "last_update": "2026-11-11T22:10:15+00:00",
+      "pairs": 13701,
+      "sxx": 16.252650223013358,
+      "sxz": 16.139783882455852
+    },
+    "30": {
+      "alpha": 0.9864360225042293,
+      "clipped_updates": 0,
+      "expired": 59,
+      "last_update": "2026-11-11T22:10:15+00:00",
+      "pairs": 13688,
+      "sxx": 16.209492745895904,
+      "sxz": 15.973575506699023
+    },
+    "60": {
+      "alpha": 0.9711115116781341,
+      "clipped_updates": 0,
+      "expired": 74,
+      "last_update": "2026-11-11T21:20:19+00:00",
+      "pairs": 13671,
+      "sxx": 16.230609980565845,
+      "sxz": 15.727544633541289
+    }
+  },
+  "online_mode": "off"
+}

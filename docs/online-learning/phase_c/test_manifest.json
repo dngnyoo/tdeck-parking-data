@@ -1,0 +1,173 @@
+{
+  "selection_sha256": "08f777cfa654d1ed16c2f621c34dac4d10247a477d21e7fe19fa45e212e94d7c",
+  "test_cache_sha256": "04228fa11fab60d4e0559666c8f00df0175e9577d7d3daddf39ccbcc4af8d394",
+  "protocol_sha256": "61cc61a131f1431b145a430d3c3adb3a29d65aeca2671ec3ce09674bf0fca211",
+  "source_metadata": {
+    "end": "2026-11-11",
+    "source_sha256": "0517ab28a67a12ad3bf5f85ce3d7b20a31f8579812ab5fe7fc2e37724c1b647a",
+    "canonical_source_sha256": "3cb0a7a16f646af6f37994b08ded3651e2873c04df9642c1aa8524eb89bacf47",
+    "protocol_sha256": "61cc61a131f1431b145a430d3c3adb3a29d65aeca2671ec3ce09674bf0fca211",
+    "cfg": {
+      "timezone": "America/New_York",
+      "capacity": 1300,
+      "freshness_seconds": 1200,
+      "future_clock_tolerance_seconds": 120,
+      "trend_match_tolerance_seconds": 90,
+      "maximum_history_gap_seconds": 600,
+      "minimum_history_days": 14,
+      "baseline_half_life_days": 7,
+      "baseline_window_minutes": 15,
+      "baseline_history_policy": "completed_local_days",
+      "parameters_available_from": "2026-09-24T00:00:00-04:00",
+      "horizons": [
+        {
+          "minutes": 15,
+          "alpha": 1.0,
+          "warning_cutoff": 25
+        },
+        {
+          "minutes": 30,
+          "alpha": 1.0,
+          "warning_cutoff": 25
+        },
+        {
+          "minutes": 60,
+          "alpha": 1.0,
+          "warning_cutoff": 50
+        },
+        {
+          "minutes": 120,
+          "alpha": 0.75,
+          "warning_cutoff": 100
+        }
+      ],
+      "source_repository": "https://github.com/dngnyoo/tdeck-parking-data",
+      "selection_basis": "Phase 2 validation 2026-09-17 through 2026-09-23, MAE; warning cutoff chosen on validation full-capacity F1",
+      "normalization_policy": "finite_clip_1300_v1"
+    },
+    "options": {
+      "mode": "off",
+      "state_branch": "model-state",
+      "ingestion_encoding": "utf8_lf_v1",
+      "outcome_tolerance_seconds": 90,
+      "alpha_min": 0.0,
+      "alpha_max": 2.0,
+      "optimizer_half_life_days": 14,
+      "prior_strength": 200,
+      "prior_feature_scale_spaces": 100,
+      "minimum_training_pairs": 20,
+      "model_version": "M3-online-v1",
+      "parameter_status": "unvalidated_candidates_not_for_promotion"
+    },
+    "rows": 20083,
+    "start": "2026-09-03T12:21:57-04:00",
+    "last": "2026-11-11T23:55:13-05:00",
+    "quality": {
+      "normalization_policy": "finite_clip_1300_v1",
+      "input_rows": 20259,
+      "invalid_rows": 0,
+      "clipped_to_zero": 329,
+      "clipped_to_capacity": 0,
+      "reported_capacity_mismatch": 2570,
+      "invalid_reasons": {},
+      "duplicate_rows": 0,
+      "clipped_rows": 329,
+      "rejected_rows": 0
+    },
+    "seconds": 22.644492599996738,
+    "engine_update_seconds": 13.202426001895219,
+    "state_bytes": 775465,
+    "baseline_audits": 92,
+    "max_baseline_audit_difference": 1.1368683772161603e-12,
+    "reference_optimizers": {
+      "15": {
+        "alpha": 0.9935862918939015,
+        "sxx": 16.662836142867462,
+        "sxz": 16.548375388519553,
+        "pairs": 13783,
+        "expired": 49,
+        "last_update": "2026-11-12T04:55:13+00:00",
+        "clipped_updates": 0
+      },
+      "30": {
+        "alpha": 0.9865361987441316,
+        "sxx": 16.62342678950504,
+        "sxz": 16.38367878240917,
+        "pairs": 13770,
+        "expired": 59,
+        "last_update": "2026-11-12T04:55:13+00:00",
+        "clipped_updates": 0
+      },
+      "60": {
+        "alpha": 0.971598061919402,
+        "sxx": 16.583116980695,
+        "sxz": 16.07851255798386,
+        "pairs": 13749,
+        "expired": 74,
+        "last_update": "2026-11-12T04:55:13+00:00",
+        "clipped_updates": 0
+      },
+      "120": {
+        "alpha": 0.9292435529167661,
+        "sxx": 16.509022481020647,
+        "sxz": 15.553025253276886,
+        "pairs": 13708,
+        "expired": 103,
+        "last_update": "2026-11-12T04:55:13+00:00",
+        "clipped_updates": 0
+      }
+    }
+  },
+  "selected_options": {
+    "mode": "off",
+    "state_branch": "model-state",
+    "ingestion_encoding": "utf8_lf_v1",
+    "outcome_tolerance_seconds": 90,
+    "alpha_min": 0.0,
+    "alpha_max": 2.0,
+    "optimizer_half_life_days": 14,
+    "prior_strength": 50,
+    "prior_feature_scale_spaces": 100,
+    "minimum_training_pairs": 20,
+    "model_version": "M3-online-v1",
+    "parameter_status": "unvalidated_candidates_not_for_promotion"
+  },
+  "final_optimizers": {
+    "15": {
+      "alpha": 0.993250615084893,
+      "initial": 1.0,
+      "sxx": 16.662836142867462,
+      "sxz": 16.548375388519553,
+      "pairs": 13783,
+      "last": 1794459313.0
+    },
+    "30": {
+      "alpha": 0.985829897052606,
+      "initial": 1.0,
+      "sxx": 16.62342678950504,
+      "sxz": 16.38367878240917,
+      "pairs": 13770,
+      "last": 1794459313.0
+    },
+    "60": {
+      "alpha": 0.9701045576735516,
+      "initial": 1.0,
+      "sxx": 16.583116980695,
+      "sxz": 16.07851255798386,
+      "pairs": 13749,
+      "last": 1794459313.0
+    },
+    "120": {
+      "alpha": 0.9387105593119968,
+      "initial": 0.75,
+      "sxx": 16.509022481020647,
+      "sxz": 15.553025253276886,
+      "pairs": 13708,
+      "last": 1794459313.0
+    }
+  },
+  "matched_pairs": 15755,
+  "cached_replay_vs_real_engine_max_error": 0.0,
+  "online_mode_unchanged": "off",
+  "scored_at": "2026-11-12T19:35:58.098179+00:00"
+}
